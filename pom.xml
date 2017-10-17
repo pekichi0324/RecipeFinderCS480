@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>ingredient_gui</groupId>
+  <artifactId>ingredient_gui</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>Watson</name>
+  <build>
+    <sourceDirectory>ingredient_gui/src</sourceDirectory>
+    <resources>
+      <resource>
+        <directory>ingredient_gui/src</directory>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.6.1</version>
+        <configuration>
+          <source/>
+          <target/>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+  	<dependency>
+	    <groupId>com.ibm.watson.developer_cloud</groupId>
+	    <artifactId>java-sdk</artifactId>
+	    <version>3.9.1</version>
+	</dependency>
+  </dependencies>
+</project>
