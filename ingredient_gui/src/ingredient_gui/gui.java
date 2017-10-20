@@ -98,7 +98,6 @@ public class gui extends javax.swing.JFrame {
         ImageIcon icon = null;
         BufferedImage stock = null;
         BufferedImage after = null;
-    
 		try {
 			stock = ImageIO.read(new File("img/01-cat-wants-to-tell-you-laptop.jpg"));
 			
@@ -119,7 +118,7 @@ public class gui extends javax.swing.JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if(stock != null) {
+		if(icon != null) {
 			
 			//img.setIcon(new javax.swing.ImageIcon(scale(stock, stock.getType(),stock.getWidth(),stock.getHeight(),(img.getWidth()/stock.getWidth()),(img.getHeight()/stock.getHeight())))); // NOI18N
 			img.setIcon(icon);
@@ -134,6 +133,7 @@ public class gui extends javax.swing.JFrame {
         selectedImageLayout.setHorizontalGroup(
             selectedImageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(img, javax.swing.GroupLayout.DEFAULT_SIZE, 800, javax.swing.GroupLayout.DEFAULT_SIZE)
+            //addComponent(component,min,pref,max)
         );
         selectedImageLayout.setVerticalGroup(
             selectedImageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
