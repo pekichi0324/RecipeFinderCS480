@@ -40,7 +40,7 @@ public class gui extends javax.swing.JFrame {
 	final int norm = NORMAL;
 	final int imageHeight = 800;
 	final int imageWidth = 525;
-	
+	//Thread watson = null;
     /**
      * Creates new form gui
      */
@@ -74,7 +74,7 @@ public class gui extends javax.swing.JFrame {
                 return null;
         }
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -198,19 +198,41 @@ public class gui extends javax.swing.JFrame {
 
     private void setImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setImageActionPerformed
         //String returnedInfo = "PUT WATSON INFO HERE";
-        int i = imageList.getSelectedIndex();
-        img.setIcon(imgNames[i].scale(imageHeight, imageWidth, norm));
-		ClassifyImagesOptions options = new ClassifyImagesOptions.Builder()
-				  .images(new File(imgNames[i].getPath()))
-				  .build();
-				//return a result for us to print using VisualRecognition service and 
-				VisualClassification result = service.classify(options).execute();
-				List<ImageClassification> ic = result.getImages();
-        //img.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/01-cat-wants-to-tell-you-laptop.jpg"))); // update "img" field
-		Gson gson = new Gson();
-		String jsonInString = gson.toJson(result);
-		System.out.println(jsonInString);
-        watsonInfo.setText(result.toString());
+    	final int i = imageList.getSelectedIndex();
+    	File file = null;
+    	if(i < 0) {
+    		img.setIcon(imgNames[0].scale(imageHeight, imageWidth, norm));
+    		watsonInfo.setText("Loading...");
+    	}
+    	else {
+    		img.setIcon(imgNames[i].scale(imageHeight, imageWidth, norm));
+    		watsonInfo.setText("Loading...");
+    	}
+//        
+        Runnable watsonThread = new Runnable() {
+        	File f = null;
+			public void run() {
+				if(i < 0) {
+		    		f = new File(imgNames[0].getPath());
+		    	}
+		    	else {
+		    		f = new File(imgNames[i].getPath());
+		    	}
+			    try{
+			    	ClassifyImagesOptions options = new ClassifyImagesOptions.Builder()
+							  .images(f)
+							  .build();
+							//return a result for us to print using VisualRecognition service and 
+							VisualClassification result = service.classify(options).execute();
+							List<ImageClassification> ic = result.getImages();
+							watsonInfo.setText(result.toString());
+			    }catch(Exception e){
+			    }   
+			}
+		};
+		Thread watson = new Thread(watsonThread);
+		watson.start();
+        
     }//GEN-LAST:event_setImageActionPerformed
 
     /**
