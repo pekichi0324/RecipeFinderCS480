@@ -35,28 +35,32 @@ import com.ibm.watson.developer_cloud.visual_recognition.v3.model.VisualClassifi
  * @author Evan
  */
 public class gui extends javax.swing.JFrame {
-	private String[] imgNames = new ImgRenderer().getImageNames();
+	private myImage[] imgNames = new ImageList().getImageNames();
 	private VisualRecognition service = new VisualRecognition("2016-05-20");
+	final int norm = NORMAL;
+	final int imageHeight = 800;
+	final int imageWidth = 525;
 	
     /**
      * Creates new form gui
      */
     public gui() {
         initComponents();
-        setImageList();
+        //setImageList();
     }
     
     public void setImageList() {
-       ImgRenderer renderer = new ImgRenderer();
-        imageList.setCellRenderer(renderer);
-        renderer.setPreferredSize(new Dimension(628, 101));
-
-        for (int i = 0; i < imgNames.length; ++i) {
-            System.out.println(imgNames[i]);
-            JLabel ic = new JLabel();
-            ic.setIcon(new ImageIcon("img" + imgNames[i]));
-            imageList.add(ic);
-        }
+//    	ImgRenderer renderer = new ImgRenderer();
+//        imageList.setCellRenderer(renderer);
+//        renderer.setPreferredSize(new Dimension(628, 101));
+//        for (int i = 0; i < imgNames.length; ++i) {
+//            System.out.println(imgNames[i]);
+            //imageList.add(img);
+//            JLabel ic = new JLabel();
+//            ic.setIcon(new ImageIcon("img/" + imgNames[i]));
+//            imageList.add(ic);
+            
+//        }
 
         
     }
@@ -84,40 +88,39 @@ public class gui extends javax.swing.JFrame {
     	
         selectedImage = new javax.swing.JPanel();
         img = new javax.swing.JLabel();
-        imageSelect = new javax.swing.JScrollPane();
-        imageList = new javax.swing.JList();
+        //imageSelect = new javax.swing.JScrollPane();
+        imageList = new javax.swing.JList(imgNames);
         setImage = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         watsonInfo = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        
-        int imageHeight = 800;
-        int imageWidth = 525; 
+         
         System.out.println("imageHeight: " + imageHeight);
         ImageIcon icon = null;
         BufferedImage stock = null;
         BufferedImage after = null;
-		try {
-			stock = ImageIO.read(new File("img/01-cat-wants-to-tell-you-laptop.jpg"));
-			
-			//icon = new ImageIcon(stock);
-			System.out.println("Stock Width: "+ stock.getWidth()+"\nStock Height: "+stock.getHeight()+"\nScale W: "+ (double)imageWidth/stock.getWidth()+"\nScale H: " +(double)imageHeight/stock.getWidth());
-			/*
-			icon = new ImageIcon(scale
-					(
-							stock, stock.getType(),stock.getWidth(),stock.getHeight(),
-							(imageWidth/stock.getWidth()),(imageHeight/stock.getHeight())
-					)
-			);
-			*/
-			after = new BufferedImage(imageWidth,imageHeight,stock.getType());
-			icon = new ImageIcon(stock.getScaledInstance(imageHeight, imageWidth, NORMAL));
-			//stock = (BufferedImage) getClass().getResource("/img/donut platter.jpg").getContent();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        icon = imgNames[0].scale(imageHeight, imageWidth, norm);
+        System.out.println(norm);
+//		try {
+//			//stock = imgNames[i].getImage();			
+//			//icon = new ImageIcon(stock);
+//			//System.out.println("Stock Width: "+ stock.getWidth()+"\nStock Height: "+stock.getHeight()+"\nScale W: "+ (double)imageWidth/stock.getWidth()+"\nScale H: " +(double)imageHeight/stock.getWidth());
+//			/*
+//			icon = new ImageIcon(scale
+//					(
+//							stock, stock.getType(),stock.getWidth(),stock.getHeight(),
+//							(imageWidth/stock.getWidth()),(imageHeight/stock.getHeight())
+//					)
+//			);
+//			*/
+//			//after = new BufferedImage(imageWidth,imageHeight,stock.getType());
+//			icon = imgNames[0].scale(imageHeight, imageWidth, NORMAL);
+//			//stock = (BufferedImage) getClass().getResource("/img/donut platter.jpg").getContent();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		if(icon != null) {
 			
 			//img.setIcon(new javax.swing.ImageIcon(scale(stock, stock.getType(),stock.getWidth(),stock.getHeight(),(img.getWidth()/stock.getWidth()),(img.getHeight()/stock.getHeight())))); // NOI18N
@@ -141,7 +144,11 @@ public class gui extends javax.swing.JFrame {
         );
 
         imageList.setLayoutOrientation(javax.swing.JList.HORIZONTAL_WRAP);
-        imageSelect.setViewportView(imageList);
+        imageList.setCellRenderer(new ImgRenderer());
+        imageList.setVisibleRowCount(3);
+        imageSelect = new javax.swing.JScrollPane(imageList);
+        
+        //add(imageSelect, BorderLayout.NORTH);
 
         setImage.setText("Choose");
         setImage.addActionListener(new java.awt.event.ActionListener() {
@@ -192,9 +199,9 @@ public class gui extends javax.swing.JFrame {
     private void setImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setImageActionPerformed
         //String returnedInfo = "PUT WATSON INFO HERE";
         int i = imageList.getSelectedIndex();
-        
+        img.setIcon(imgNames[i].scale(imageHeight, imageWidth, norm));
 		ClassifyImagesOptions options = new ClassifyImagesOptions.Builder()
-				  .images(new File("img/01-cat-wants-to-tell-you-laptop.jpg"))
+				  .images(new File(imgNames[i].getPath()))
 				  .build();
 				//return a result for us to print using VisualRecognition service and 
 				VisualClassification result = service.classify(options).execute();
