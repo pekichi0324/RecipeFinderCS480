@@ -12,10 +12,12 @@ public class myImage {
 	private ImageIcon image;
 	private BufferedImage bufImage;
 	private File file;
+	private String imageName;
 	
 	public myImage(String imagePath) {
-		this.imagePath = imagePath;
-		file = new File(imagePath);
+		this.imagePath = "img/" + imagePath;
+		imageName = imagePath;
+		file = new File(this.imagePath);
 		try {
 			bufImage = ImageIO.read(file);
 		} catch (IOException e) {
@@ -23,6 +25,7 @@ public class myImage {
 		}
 		image = new ImageIcon(imagePath);
 	}
+	public String getImageName() {return imageName;}
 	public String getPath() {return imagePath;}
 	public ImageIcon getImage() {
 		if(image == null) {

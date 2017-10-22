@@ -18,7 +18,7 @@ import javax.swing.ListCellRenderer;
  * @author Evan
  */
 public class ImgRenderer extends JLabel implements ListCellRenderer {
-	private static final Color HIGHLIGHT_COLOR = new Color(128, 128, 128);
+	private static final Color HIGHLIGHT_COLOR = new Color(0, 0, 128);
 	
     public ImgRenderer() {
             setOpaque(true);
@@ -35,16 +35,14 @@ public class ImgRenderer extends JLabel implements ListCellRenderer {
     	setIcon(image.scale(100,100,0));
     	
     	if (isSelected) {
-    	      setBackground(HIGHLIGHT_COLOR);
-    	      setForeground(Color.white);
-    	    } else {
-    	      setBackground(Color.white);
-    	      setForeground(Color.black);
-    	    }
-        //int selectedIndex = ((Integer)value).intValue();
-        
-//        ImageIcon icon = new ImageIcon(imageNames[selectedIndex]);
-//        String image = imageNames[selectedIndex];
+    		this.setEnabled(false);
+			setBackground(HIGHLIGHT_COLOR);
+			setForeground(Color.white);
+	    }else {
+	    	this.setEnabled(true);
+			setBackground(Color.white);
+			setForeground(Color.black);
+	    }
         return this;
     }
     

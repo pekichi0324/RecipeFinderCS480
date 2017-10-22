@@ -5,13 +5,18 @@
  */
 package ingredient_gui;
 
+import java.awt.Button;
+import java.awt.Container;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.List;
@@ -19,6 +24,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 
 import com.google.gson.Gson;
@@ -26,9 +32,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.VisualRecognition;
-import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifyImagesOptions;
-import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ImageClassification;
-import com.ibm.watson.developer_cloud.visual_recognition.v3.model.VisualClassification;
+import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifiedImages;
+import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifyOptions;
 
 /**
  *
@@ -36,34 +41,22 @@ import com.ibm.watson.developer_cloud.visual_recognition.v3.model.VisualClassifi
  */
 public class gui extends javax.swing.JFrame {
 	private myImage[] imgNames = new ImageList().getImageNames();
-	private VisualRecognition service = new VisualRecognition("2016-05-20");
+	private VisualRecognition service = new VisualRecognition(
+			  VisualRecognition.VERSION_DATE_2016_05_20
+			);
 	final int norm = NORMAL;
 	final int imageHeight = 800;
 	final int imageWidth = 525;
+	final Container container = this;
+
 	//Thread watson = null;
     /**
      * Creates new form gui
      */
     public gui() {
         initComponents();
-        //setImageList();
     }
-    
-    public void setImageList() {
-//    	ImgRenderer renderer = new ImgRenderer();
-//        imageList.setCellRenderer(renderer);
-//        renderer.setPreferredSize(new Dimension(628, 101));
-//        for (int i = 0; i < imgNames.length; ++i) {
-//            System.out.println(imgNames[i]);
-            //imageList.add(img);
-//            JLabel ic = new JLabel();
-//            ic.setIcon(new ImageIcon("img/" + imgNames[i]));
-//            imageList.add(ic);
-            
-//        }
-
-        
-    }
+  
     /** Returns an ImageIcon, or null if the path was invalid. */
     protected static ImageIcon createImageIcon(String path) {
         java.net.URL imgURL = ImgRenderer.class.getResource(path);
@@ -101,36 +94,12 @@ public class gui extends javax.swing.JFrame {
         BufferedImage stock = null;
         BufferedImage after = null;
         icon = imgNames[0].scale(imageHeight, imageWidth, norm);
-        System.out.println(norm);
-//		try {
-//			//stock = imgNames[i].getImage();			
-//			//icon = new ImageIcon(stock);
-//			//System.out.println("Stock Width: "+ stock.getWidth()+"\nStock Height: "+stock.getHeight()+"\nScale W: "+ (double)imageWidth/stock.getWidth()+"\nScale H: " +(double)imageHeight/stock.getWidth());
-//			/*
-//			icon = new ImageIcon(scale
-//					(
-//							stock, stock.getType(),stock.getWidth(),stock.getHeight(),
-//							(imageWidth/stock.getWidth()),(imageHeight/stock.getHeight())
-//					)
-//			);
-//			*/
-//			//after = new BufferedImage(imageWidth,imageHeight,stock.getType());
-//			icon = imgNames[0].scale(imageHeight, imageWidth, NORMAL);
-//			//stock = (BufferedImage) getClass().getResource("/img/donut platter.jpg").getContent();
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+        
 		if(icon != null) {
-			
-			//img.setIcon(new javax.swing.ImageIcon(scale(stock, stock.getType(),stock.getWidth(),stock.getHeight(),(img.getWidth()/stock.getWidth()),(img.getHeight()/stock.getHeight())))); // NOI18N
 			img.setIcon(icon);
-			//img.setText("jLabel1");
 		}else {
 			System.out.println("was null");
 		}
-        
-
         javax.swing.GroupLayout selectedImageLayout = new javax.swing.GroupLayout(selectedImage);
         selectedImage.setLayout(selectedImageLayout);
         selectedImageLayout.setHorizontalGroup(
@@ -145,7 +114,7 @@ public class gui extends javax.swing.JFrame {
 
         imageList.setLayoutOrientation(javax.swing.JList.HORIZONTAL_WRAP);
         imageList.setCellRenderer(new ImgRenderer());
-        imageList.setVisibleRowCount(3);
+        imageList.setVisibleRowCount(1);
         imageSelect = new javax.swing.JScrollPane(imageList);
         
         //add(imageSelect, BorderLayout.NORTH);
@@ -160,6 +129,7 @@ public class gui extends javax.swing.JFrame {
         watsonInfo.setColumns(20);
         watsonInfo.setRows(5);
         watsonInfo.setMaximumSize(new java.awt.Dimension(172, 388));
+        watsonInfo.setDragEnabled(true);
         jScrollPane1.setViewportView(watsonInfo);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -199,16 +169,8 @@ public class gui extends javax.swing.JFrame {
     private void setImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setImageActionPerformed
         //String returnedInfo = "PUT WATSON INFO HERE";
     	final int i = imageList.getSelectedIndex();
-    	File file = null;
-    	if(i < 0) {
-    		img.setIcon(imgNames[0].scale(imageHeight, imageWidth, norm));
-    		watsonInfo.setText("Loading...");
-    	}
-    	else {
-    		img.setIcon(imgNames[i].scale(imageHeight, imageWidth, norm));
-    		watsonInfo.setText("Loading...");
-    	}
-//        
+    	final JButton b = (JButton) evt.getSource();
+    	
         Runnable watsonThread = new Runnable() {
         	File f = null;
 			public void run() {
@@ -219,22 +181,47 @@ public class gui extends javax.swing.JFrame {
 		    		f = new File(imgNames[i].getPath());
 		    	}
 			    try{
-			    	ClassifyImagesOptions options = new ClassifyImagesOptions.Builder()
-							  .images(f)
-							  .build();
-							//return a result for us to print using VisualRecognition service and 
-							VisualClassification result = service.classify(options).execute();
-							List<ImageClassification> ic = result.getImages();
-							watsonInfo.setText(result.toString());
+			    	InputStream imagesStream = new FileInputStream(f);
+			    	ClassifyOptions classifyOptions = new ClassifyOptions.Builder()
+			    	  .imagesFile(imagesStream)
+			    	  .imagesFilename(imgNames[i].getImageName())
+			    	  .build();
+			    	ClassifiedImages result = service.classify(classifyOptions).execute();
+			    	System.out.println(result);
+			    	
+			    	
+			    	
+			    	
+//			    	ClassifyImagesOptions options = new ClassifyImagesOptions.Builder()
+//							  .images(f)
+//							  .build();
+//					//return a result for us to print using VisualRecognition service and 
+//					VisualClassification result = service.classify(options).execute();
+					watsonInfo.setText(result.toString());
+//					System.out.println(result.toString());
+					container.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+					//b.setEnabled(true);
+					Thread.sleep(1000);
 			    }catch(Exception e){
 			    }   
 			}
 		};
 		Thread watson = new Thread(watsonThread);
 		watson.start();
+		if(i < 0) {
+    		img.setIcon(imgNames[0].scale(imageHeight, imageWidth, norm));
+    		watsonInfo.setText("Loading...\nPlease Wait!");
+    		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    		//b.setEnabled(false);
+    	}
+    	else {
+    		img.setIcon(imgNames[i].scale(imageHeight, imageWidth, norm));
+    		watsonInfo.setText("Loading...\nPlease Wait!");
+    		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+    		//b.setEnabled(false);
+    	}
         
     }//GEN-LAST:event_setImageActionPerformed
-
     /**
      * @param args the command line arguments
      */

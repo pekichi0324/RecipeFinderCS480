@@ -14,7 +14,7 @@ public class ImageList {
       myImage[] ret = new myImage[listOfFiles.length];
       
       for (int i = 0; i < listOfFiles.length; i++) {
-          ret[i] = new myImage("img/" + listOfFiles[i].getName());
+          ret[i] = new myImage(listOfFiles[i].getName());
           System.out.println("Path to file: " + ret[i].getImage());
       }
       return ret;
