@@ -1,5 +1,6 @@
 Bugs on my end:
-[ ] classify images not importing / loading properly (however, the package is visible in my dependencies)
+[x] classify images not importing / loading properly (however, the package is visible in my dependencies)
+[ ] classifying images not working, got import working
 
 Suggestions:
 [ ] have 2 different buttons for choose and to classify the image
