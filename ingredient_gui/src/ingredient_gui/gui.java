@@ -20,6 +20,8 @@ import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
 
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
@@ -31,6 +33,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.VisualRecognition;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifiedImages;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifyOptions;
@@ -173,6 +176,7 @@ public class gui extends javax.swing.JFrame {
     	
         Runnable watsonThread = new Runnable() {
         	File f = null;
+        	int x = 0;
 			public void run() {
 				if(i < 0) {
 		    		f = new File(imgNames[0].getPath());
@@ -182,25 +186,20 @@ public class gui extends javax.swing.JFrame {
 		    	}
 			    try{
 			    	InputStream imagesStream = new FileInputStream(f);
+			    	//can add parameters here too
+			    	if (i < 0)
+			    		x = 0;
+			    	else
+			    		x = i;
 			    	ClassifyOptions classifyOptions = new ClassifyOptions.Builder()
 			    	  .imagesFile(imagesStream)
-			    	  .imagesFilename(imgNames[i].getImageName())
+			    	  .imagesFilename(imgNames[x].getImageName())
 			    	  .build();
 			    	ClassifiedImages result = service.classify(classifyOptions).execute();
-			    	System.out.println(result);
-			    	
-			    	
-			    	
-			    	
-//			    	ClassifyImagesOptions options = new ClassifyImagesOptions.Builder()
-//							  .images(f)
-//							  .build();
-//					//return a result for us to print using VisualRecognition service and 
-//					VisualClassification result = service.classify(options).execute();
+
 					watsonInfo.setText(result.toString());
-//					System.out.println(result.toString());
 					container.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-					//b.setEnabled(true);
+					b.setEnabled(true);
 					Thread.sleep(1000);
 			    }catch(Exception e){
 			    }   
@@ -212,13 +211,13 @@ public class gui extends javax.swing.JFrame {
     		img.setIcon(imgNames[0].scale(imageHeight, imageWidth, norm));
     		watsonInfo.setText("Loading...\nPlease Wait!");
     		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-    		//b.setEnabled(false);
+    		b.setEnabled(false);
     	}
     	else {
     		img.setIcon(imgNames[i].scale(imageHeight, imageWidth, norm));
     		watsonInfo.setText("Loading...\nPlease Wait!");
     		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-    		//b.setEnabled(false);
+    		b.setEnabled(false);
     	}
         
     }//GEN-LAST:event_setImageActionPerformed
