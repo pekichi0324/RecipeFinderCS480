@@ -1,7 +1,7 @@
 Bugs on my end:
-- classify images not importing / loading properly (however, the package is visible in my dependencies)
+[ ] classify images not importing / loading properly (however, the package is visible in my dependencies)
 
 Suggestions:
-- have 2 different buttons for choose and to classify the image
+[ ] have 2 different buttons for choose and to classify the image
              - choose places image in tray
              - "classify" or "get ingredients" classifies the image
