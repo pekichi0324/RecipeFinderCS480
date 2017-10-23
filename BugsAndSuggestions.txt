@@ -1,6 +1,13 @@
 Bugs on my end:
 [x] classify images not importing / loading properly (however, the package is visible in my dependencies)
 [ ] classifying images not working, got import working
+      Exception in thread "Thread-4" java.lang.NoSuchMethodError:
+      com.ibm.watson.developer_cloud.util.RequestUtils.inputStreamBody(Ljava/io/InputStream;Ljava/lang/String;)Lokhttp3/RequestBody;
+	    at com.ibm.watson.developer_cloud.visual_recognition.v3.VisualRecognition.classify(VisualRecognition.java:126)
+      at ingredient_gui.gui$2.run(gui.java:189)
+      at java.lang.Thread.run(Unknown Source)
+      
+      - also freezing when clicking "choose"
 
 Suggestions:
 [ ] have 2 different buttons for choose and to classify the image
