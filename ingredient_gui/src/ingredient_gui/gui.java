@@ -18,7 +18,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -58,8 +60,65 @@ public class gui extends javax.swing.JFrame {
      */
     public gui() {
         initComponents();
+        start();
     }
   
+    public void start() {
+    	
+    	service.setApiKey("af16cab33a7b47433d5ce63aace1d08f379afa2a");
+    	
+    	System.out.println("imageHeight: " + imageHeight);
+        ImageIcon icon = null;
+        icon = imgNames[0].scale(imageHeight, imageWidth, norm);
+		if(icon != null) {
+			img.setIcon(icon);
+		}else {
+			System.out.println("was null");
+		}
+		
+		imageList.setLayoutOrientation(javax.swing.JList.HORIZONTAL_WRAP);
+        imageList.setCellRenderer(new ImgRenderer());
+        imageList.setVisibleRowCount(1);
+    	imageList.setListData(imgNames);
+    	imageSelect.setViewportView(imageList);
+    	imageSelect.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+    	watsonInfo.setDragEnabled(true);
+    	Dimension d = new Dimension(800,525);
+    	img.setSize(d);
+    	img.setMinimumSize(d);
+    	img.setMaximumSize(d);
+    }
+    public static boolean isInternetReachable()
+    {
+        try {
+            //make a URL to a known source
+            URL url = new URL("http://www.google.com");
+
+            //open a connection to that source
+            HttpURLConnection urlConnect = (HttpURLConnection)url.openConnection();
+
+            //trying to retrieve data from the source. If there
+            //is no connection, this line will fail
+            Object objData = urlConnect.getContent();
+
+        } catch (UnknownHostException e) {
+            // TODO Auto-generated catch block
+        	javax.swing.JOptionPane.showMessageDialog(null,
+   				 "No Internet Connect Detected!", 
+   				 "Alert", 
+   				 javax.swing.JOptionPane.ERROR);
+            return false;
+        }
+        catch (IOException e) {
+            // TODO Auto-generated catch block
+        	javax.swing.JOptionPane.showMessageDialog(null,
+   				 "No Internet Connect Detected!", 
+   				 "Alert", 
+   				 javax.swing.JOptionPane.ERROR);
+            return false;
+        }
+        return true;
+    }
     /** Returns an ImageIcon, or null if the path was invalid. */
     protected static ImageIcon createImageIcon(String path) {
         java.net.URL imgURL = ImgRenderer.class.getResource(path);
@@ -79,48 +138,33 @@ public class gui extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-    	
-		service.setApiKey("af16cab33a7b47433d5ce63aace1d08f379afa2a");
-    	
+
         selectedImage = new javax.swing.JPanel();
         img = new javax.swing.JLabel();
-        //imageSelect = new javax.swing.JScrollPane();
-        imageList = new javax.swing.JList(imgNames);
+        imageSelect = new javax.swing.JScrollPane();
+        imageList = new javax.swing.JList();
         setImage = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         watsonInfo = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-         
-        System.out.println("imageHeight: " + imageHeight);
-        ImageIcon icon = null;
-        BufferedImage stock = null;
-        BufferedImage after = null;
-        icon = imgNames[0].scale(imageHeight, imageWidth, norm);
-        
-		if(icon != null) {
-			img.setIcon(icon);
-		}else {
-			System.out.println("was null");
-		}
+
+        //img.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/donut platter.jpg"))); // NOI18N
+        img.setText("jLabel1");
+
         javax.swing.GroupLayout selectedImageLayout = new javax.swing.GroupLayout(selectedImage);
         selectedImage.setLayout(selectedImageLayout);
         selectedImageLayout.setHorizontalGroup(
             selectedImageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(img, javax.swing.GroupLayout.DEFAULT_SIZE, 800, javax.swing.GroupLayout.DEFAULT_SIZE)
-            //addComponent(component,min,pref,max)
+            .addComponent(img, javax.swing.GroupLayout.PREFERRED_SIZE, 525, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         selectedImageLayout.setVerticalGroup(
             selectedImageLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(img, javax.swing.GroupLayout.DEFAULT_SIZE, 525, javax.swing.GroupLayout.DEFAULT_SIZE)
+            .addComponent(img, javax.swing.GroupLayout.PREFERRED_SIZE, 388, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         imageList.setLayoutOrientation(javax.swing.JList.HORIZONTAL_WRAP);
-        imageList.setCellRenderer(new ImgRenderer());
-        imageList.setVisibleRowCount(1);
-        imageSelect = new javax.swing.JScrollPane(imageList);
-        
-        //add(imageSelect, BorderLayout.NORTH);
+        imageSelect.setViewportView(imageList);
 
         setImage.setText("Choose");
         setImage.addActionListener(new java.awt.event.ActionListener() {
@@ -132,7 +176,6 @@ public class gui extends javax.swing.JFrame {
         watsonInfo.setColumns(20);
         watsonInfo.setRows(5);
         watsonInfo.setMaximumSize(new java.awt.Dimension(172, 388));
-        watsonInfo.setDragEnabled(true);
         jScrollPane1.setViewportView(watsonInfo);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -191,15 +234,20 @@ public class gui extends javax.swing.JFrame {
 			    		x = 0;
 			    	else
 			    		x = i;
-			    	ClassifyOptions classifyOptions = new ClassifyOptions.Builder()
-			    	  .imagesFile(imagesStream)
-			    	  .imagesFilename(imgNames[x].getImageName())
-			    	  .build();
-			    	ClassifiedImages result = service.classify(classifyOptions).execute();
-
-					watsonInfo.setText(result.toString());
-					container.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-					b.setEnabled(true);
+			    	if(isInternetReachable()) {
+				    	ClassifyOptions classifyOptions = new ClassifyOptions.Builder()
+				    	  .imagesFile(imagesStream)
+				    	  .imagesFilename(imgNames[x].getImageName())
+				    	  .build();
+				    	ClassifiedImages result = service.classify(classifyOptions).execute();
+		
+						watsonInfo.setText(result.toString());
+						container.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+						b.setEnabled(true);
+			    	}else {
+			    		container.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			    		b.setEnabled(true);
+			    	}
 					Thread.sleep(1000);
 			    }catch(Exception e){
 			    }   
