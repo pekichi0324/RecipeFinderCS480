@@ -1,8 +1,0 @@
-Example training
-
-To train
-curl -X POST -F "Hamburger_positive_examples=@Hamburgers.zip" -F "Hotdogs_positive_examples=@Hotdogs.zip" -F "Tacos_positive_example=@Tacos.zip" -F "negative_examples=@Non-Foods.zip" -F "name=foods" "https://gateway-a.watsonplatform.net/visual-recognition/api/v3/classifiers?api_key={af16cab33a7b47433d5ce63aace1d08f379afa2a}&version=2016-05-20"
-
-
-To check states
-curl -X GET "https://gateway-a.watsonplatform.net/visual-recognition/api/v3/classifiers?api_key={af16cab33a7b47433d5ce63aace1d08f379afa2a}&version=2016-05-20"
