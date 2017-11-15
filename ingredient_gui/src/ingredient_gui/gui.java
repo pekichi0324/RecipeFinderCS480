@@ -65,7 +65,10 @@ public class gui extends javax.swing.JFrame {
   
     public void start() {
     	
-    	service.setApiKey("af16cab33a7b47433d5ce63aace1d08f379afa2a");
+    	/* OLD KEY */
+//    	service.setApiKey("af16cab33a7b47433d5ce63aace1d08f379afa2a");
+    	
+    	service.setApiKey("f9ef8b5896c3db5e0a4a6caa297e2a011a825bab");
     	
     	System.out.println("imageHeight: " + imageHeight);
         ImageIcon icon = null;
