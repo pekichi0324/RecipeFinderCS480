@@ -50,8 +50,8 @@ public class gui extends javax.swing.JFrame {
 			  VisualRecognition.VERSION_DATE_2016_05_20
 			);
 	final int norm = NORMAL;
-	final int imageHeight = 800;
-	final int imageWidth = 525;
+	final int imageHeight = 525;
+	final int imageWidth = 338;
 	final Container container = this;
 
 	//Thread watson = null;
