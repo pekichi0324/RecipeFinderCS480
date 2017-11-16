@@ -60,6 +60,7 @@ public class gui extends javax.swing.JFrame {
      */
     public gui() {
         initComponents();
+        this.setLocationRelativeTo(null);
         start();
     }
   
@@ -272,6 +273,7 @@ public class gui extends javax.swing.JFrame {
     	}
         
     }//GEN-LAST:event_setImageActionPerformed
+
     /**
      * @param args the command line arguments
      */
