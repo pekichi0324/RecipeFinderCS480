@@ -21,6 +21,7 @@ import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -37,6 +38,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.VisualRecognition;
+import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifiedImage;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifiedImages;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifyOptions;
 
@@ -50,8 +52,8 @@ public class gui extends javax.swing.JFrame {
 			  VisualRecognition.VERSION_DATE_2016_05_20
 			);
 	final int norm = NORMAL;
-	final int imageHeight = 525;
-	final int imageWidth = 338;
+	final int imageHeight = 800;
+	final int imageWidth = 525;
 	final Container container = this;
 
 	//Thread watson = null;
@@ -244,6 +246,19 @@ public class gui extends javax.swing.JFrame {
 				    	  .imagesFilename(imgNames[x].getImageName())
 				    	  .build();
 				    	ClassifiedImages result = service.classify(classifyOptions).execute();
+				    	
+				    	/* REFINE FOR CLASSES */
+				    	
+				    	List<ClassifiedImage> resultList = result.getImages();
+				    	System.out.println(resultList);
+				    	System.out.println("---");
+				    	for (int z = 0; z < resultList.size(); z++) {
+				    		resultList.get(z).getClassifiers();
+				    		System.out.println(resultList.get(z).getClassifiers().get(z).getClasses().get(z).getClassName());
+				    		System.out.println(resultList.get(z).getClassifiers().get(z).getClasses().get(z).getScore());
+				    	}
+				    	
+				    	/* ********************/
 		
 						watsonInfo.setText(result.toString());
 						container.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
