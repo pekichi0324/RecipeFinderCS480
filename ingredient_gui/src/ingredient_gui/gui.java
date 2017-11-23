@@ -270,9 +270,11 @@ public class gui extends javax.swing.JFrame {
 				    	}
 				    	
 				    	
-				    	
-				    	
-				    	
+				    	// test to open the receipe website 
+				    	// Need to replace "" with %20 since url does not take ""
+				    	String searchTerm = classResult.get(0).getClassName().replaceAll(" ","%20");
+			    		String url_open ="http://allrecipes.com/search/results/?wt=" + searchTerm + "&sort=re";
+			    		java.awt.Desktop.getDesktop().browse(java.net.URI.create(url_open));
 				    	/* ****************** */
 		
 						watsonInfo.setText(result.toString());
