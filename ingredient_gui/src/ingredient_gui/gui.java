@@ -249,14 +249,17 @@ public class gui extends javax.swing.JFrame {
 				    	
 				    	/* REFINE FOR CLASSES */
 				    	
+				    	// What image is being processed
 				    	List<ClassifiedImage> resultList = result.getImages();
 				    	System.out.println(resultList);
 				    	System.out.println("---");
-				    	for (int z = 0; z < resultList.size(); z++) {
-				    		resultList.get(z).getClassifiers();
-				    		System.out.println(resultList.get(z).getClassifiers().get(z).getClasses().get(z).getClassName());
-				    		System.out.println(resultList.get(z).getClassifiers().get(z).getClasses().get(z).getScore());
+
+				    	System.out.println(resultList.get(0).getClassifiers().get(0).getClasses().size());
+				    	for (int z = 0; z < resultList.get(0).getClassifiers().get(0).getClasses().size(); z++) {
+				    		System.out.println(resultList.get(0).getClassifiers().get(0).getClasses().get(z).getClassName());
+				    		System.out.println(resultList.get(0).getClassifiers().get(0).getClasses().get(z).getScore());
 				    	}
+
 				    	
 				    	/* ********************/
 		
