@@ -247,7 +247,7 @@ public class gui extends javax.swing.JFrame {
 				    	  .build();
 				    	ClassifiedImages result = service.classify(classifyOptions).execute();
 				    	
-				    	/* REFINE FOR CLASSES */
+				    	/* KEYWORD DISPLAY */
 				    	
 				    	// What image is being processed
 				    	List<ClassifiedImage> resultList = result.getImages();
@@ -256,12 +256,12 @@ public class gui extends javax.swing.JFrame {
 
 				    	System.out.println(resultList.get(0).getClassifiers().get(0).getClasses().size());
 				    	for (int z = 0; z < resultList.get(0).getClassifiers().get(0).getClasses().size(); z++) {
-				    		System.out.println(resultList.get(0).getClassifiers().get(0).getClasses().get(z).getClassName());
-				    		System.out.println(resultList.get(0).getClassifiers().get(0).getClasses().get(z).getScore());
+				    		System.out.print("Keyword: " + resultList.get(0).getClassifiers().get(0).getClasses().get(z).getClassName());
+				    		System.out.print(" | Score: " + resultList.get(0).getClassifiers().get(0).getClasses().get(z).getScore() + "\n");
 				    	}
 
 				    	
-				    	/* ********************/
+				    	/* ****************** */
 		
 						watsonInfo.setText(result.toString());
 						container.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
