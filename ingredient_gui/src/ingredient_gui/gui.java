@@ -38,6 +38,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.VisualRecognition;
+import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassResult;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifiedImage;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifiedImages;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifyOptions;
@@ -253,13 +254,24 @@ public class gui extends javax.swing.JFrame {
 				    	List<ClassifiedImage> resultList = result.getImages();
 				    	System.out.println(resultList);
 				    	System.out.println("---");
+//				    	String[] badWords = {"dish", "nutrition", "food"};
 
 				    	System.out.println(resultList.get(0).getClassifiers().get(0).getClasses().size());
+				    	
+				    	// List of objects of keywords/scores
+				    	List<ClassResult> classResult = resultList.get(0).getClassifiers().get(0).getClasses();
 				    	for (int z = 0; z < resultList.get(0).getClassifiers().get(0).getClasses().size(); z++) {
-				    		System.out.print("Keyword: " + resultList.get(0).getClassifiers().get(0).getClasses().get(z).getClassName());
-				    		System.out.print(" | Score: " + resultList.get(0).getClassifiers().get(0).getClasses().get(z).getScore() + "\n");
+//				    		if (classResult.get(z).getClassName().contains(badWords[0]) || classResult.get(z).getClassName().contains(badWords[0])
+//				    					|| classResult.get(z).getClassName().contains(badWords[0])) {
+//				    			classResult.remove(classResult.get(z));
+//				    		}
+				    		System.out.println(classResult.get(z).getClassName());
+				    		System.out.println(classResult.get(z).getScore());
 				    	}
-
+				    	
+				    	
+				    	
+				    	
 				    	
 				    	/* ****************** */
 		
