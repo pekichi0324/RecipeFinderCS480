@@ -42,6 +42,7 @@ import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassResult;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifiedImage;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifiedImages;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifyOptions;
+import javax.swing.ListSelectionModel;
 
 /**
  *
@@ -49,6 +50,7 @@ import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifyOption
  */
 public class gui extends javax.swing.JFrame {
 	private myImage[] imgNames = new ImageList().getImageNames();
+        private ListSelectionModel listSelectionModel;
 	private VisualRecognition service = new VisualRecognition(
 			  VisualRecognition.VERSION_DATE_2016_05_20
 			);
@@ -73,6 +75,11 @@ public class gui extends javax.swing.JFrame {
 //    	service.setApiKey("af16cab33a7b47433d5ce63aace1d08f379afa2a");
     	
     	service.setApiKey("f9ef8b5896c3db5e0a4a6caa297e2a011a825bab");
+        
+        // list selection method init
+        listSelectionModel = imageList.getSelectionModel();
+        listSelectionModel.setSelectionMode(
+                        ListSelectionModel.SINGLE_SELECTION); // only single selection
     	
     	System.out.println("imageHeight: " + imageHeight);
         ImageIcon icon = null;
@@ -89,7 +96,6 @@ public class gui extends javax.swing.JFrame {
     	imageList.setListData(imgNames);
     	imageSelect.setViewportView(imageList);
     	imageSelect.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-    	watsonInfo.setDragEnabled(true);
     	Dimension d = new Dimension(800,525);
     	img.setSize(d);
     	img.setMinimumSize(d);
@@ -146,13 +152,156 @@ public class gui extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        userTypeDialog = new javax.swing.JDialog();
+        userButton = new javax.swing.JButton();
+        testerButton = new javax.swing.JButton();
+        chooseLabel = new javax.swing.JLabel();
+        recipeDialog = new javax.swing.JDialog();
+        imgRecipe = new javax.swing.JPanel();
+        resultPromptPane = new javax.swing.JPanel();
+        resultLabel = new javax.swing.JLabel();
+        noButton = new javax.swing.JButton();
+        yesButton = new javax.swing.JButton();
+        recipeScrollPane = new javax.swing.JScrollPane();
+        recipeText = new javax.swing.JTextArea();
         selectedImage = new javax.swing.JPanel();
         img = new javax.swing.JLabel();
         imageSelect = new javax.swing.JScrollPane();
         imageList = new javax.swing.JList();
         setImage = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        watsonInfo = new javax.swing.JTextArea();
+
+        userTypeDialog.setAlwaysOnTop(true);
+        userTypeDialog.setName(""); // NOI18N
+
+        userButton.setText("User");
+        userButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                userButtonActionPerformed(evt);
+            }
+        });
+
+        testerButton.setText("Tester");
+        testerButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                testerButtonActionPerformed(evt);
+            }
+        });
+
+        chooseLabel.setText("Choose the user type:");
+
+        javax.swing.GroupLayout userTypeDialogLayout = new javax.swing.GroupLayout(userTypeDialog.getContentPane());
+        userTypeDialog.getContentPane().setLayout(userTypeDialogLayout);
+        userTypeDialogLayout.setHorizontalGroup(
+            userTypeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(userTypeDialogLayout.createSequentialGroup()
+                .addGap(78, 78, 78)
+                .addGroup(userTypeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(userTypeDialogLayout.createSequentialGroup()
+                        .addGap(8, 8, 8)
+                        .addComponent(chooseLabel))
+                    .addGroup(userTypeDialogLayout.createSequentialGroup()
+                        .addComponent(userButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(testerButton)))
+                .addContainerGap(78, Short.MAX_VALUE))
+        );
+        userTypeDialogLayout.setVerticalGroup(
+            userTypeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, userTypeDialogLayout.createSequentialGroup()
+                .addContainerGap(31, Short.MAX_VALUE)
+                .addComponent(chooseLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(userTypeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(testerButton)
+                    .addComponent(userButton))
+                .addGap(31, 31, 31))
+        );
+
+        recipeDialog.setName("recipeDialog"); // NOI18N
+        recipeDialog.setPreferredSize(new java.awt.Dimension(1100, 525));
+
+        imgRecipe.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        javax.swing.GroupLayout imgRecipeLayout = new javax.swing.GroupLayout(imgRecipe);
+        imgRecipe.setLayout(imgRecipeLayout);
+        imgRecipeLayout.setHorizontalGroup(
+            imgRecipeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 550, Short.MAX_VALUE)
+        );
+        imgRecipeLayout.setVerticalGroup(
+            imgRecipeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        resultPromptPane.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        resultLabel.setText("Is this result accurate?");
+
+        noButton.setText("No");
+
+        yesButton.setText("Yes");
+        yesButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                yesButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout resultPromptPaneLayout = new javax.swing.GroupLayout(resultPromptPane);
+        resultPromptPane.setLayout(resultPromptPaneLayout);
+        resultPromptPaneLayout.setHorizontalGroup(
+            resultPromptPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(resultPromptPaneLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(resultPromptPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(resultPromptPaneLayout.createSequentialGroup()
+                        .addComponent(yesButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(noButton))
+                    .addGroup(resultPromptPaneLayout.createSequentialGroup()
+                        .addComponent(resultLabel)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        resultPromptPaneLayout.setVerticalGroup(
+            resultPromptPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(resultPromptPaneLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(resultLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(resultPromptPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(yesButton)
+                    .addComponent(noButton))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        recipeText.setColumns(20);
+        recipeText.setRows(5);
+        recipeScrollPane.setViewportView(recipeText);
+
+        javax.swing.GroupLayout recipeDialogLayout = new javax.swing.GroupLayout(recipeDialog.getContentPane());
+        recipeDialog.getContentPane().setLayout(recipeDialogLayout);
+        recipeDialogLayout.setHorizontalGroup(
+            recipeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, recipeDialogLayout.createSequentialGroup()
+                .addComponent(imgRecipe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(recipeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(recipeDialogLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 407, Short.MAX_VALUE)
+                        .addComponent(resultPromptPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(recipeDialogLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(recipeScrollPane))))
+        );
+        recipeDialogLayout.setVerticalGroup(
+            recipeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(imgRecipe, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(recipeDialogLayout.createSequentialGroup()
+                .addComponent(recipeScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 441, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(resultPromptPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -180,39 +329,29 @@ public class gui extends javax.swing.JFrame {
             }
         });
 
-        watsonInfo.setColumns(20);
-        watsonInfo.setRows(5);
-        watsonInfo.setMaximumSize(new java.awt.Dimension(172, 388));
-        jScrollPane1.setViewportView(watsonInfo);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(selectedImage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(imageSelect, javax.swing.GroupLayout.PREFERRED_SIZE, 876, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(setImage, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(14, Short.MAX_VALUE))
+                        .addComponent(imageSelect, javax.swing.GroupLayout.PREFERRED_SIZE, 700, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10)
+                        .addComponent(setImage, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(selectedImage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(selectedImage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1))
+                .addComponent(selectedImage, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(setImage, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
-                    .addComponent(imageSelect))
+                    .addComponent(imageSelect, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
+                    .addComponent(setImage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -277,7 +416,6 @@ public class gui extends javax.swing.JFrame {
 			    		java.awt.Desktop.getDesktop().browse(java.net.URI.create(url_open));
 				    	/* ****************** */
 		
-						watsonInfo.setText(result.toString());
 						container.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 						b.setEnabled(true);
 			    	}else {
@@ -292,19 +430,27 @@ public class gui extends javax.swing.JFrame {
 		Thread watson = new Thread(watsonThread);
 		watson.start();
 		if(i < 0) {
-    		img.setIcon(imgNames[0].scale(imageHeight, imageWidth, norm));
-    		watsonInfo.setText("Loading...\nPlease Wait!");
     		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     		b.setEnabled(false);
     	}
     	else {
-    		img.setIcon(imgNames[i].scale(imageHeight, imageWidth, norm));
-    		watsonInfo.setText("Loading...\nPlease Wait!");
     		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     		b.setEnabled(false);
     	}
         
     }//GEN-LAST:event_setImageActionPerformed
+
+    private void userButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_userButtonActionPerformed
+
+    private void testerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testerButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_testerButtonActionPerformed
+
+    private void yesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yesButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_yesButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -353,12 +499,22 @@ public class gui extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel chooseLabel;
     private javax.swing.JList imageList;
     private javax.swing.JScrollPane imageSelect;
     private javax.swing.JLabel img;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPanel imgRecipe;
+    private javax.swing.JButton noButton;
+    private javax.swing.JDialog recipeDialog;
+    private javax.swing.JScrollPane recipeScrollPane;
+    private javax.swing.JTextArea recipeText;
+    private javax.swing.JLabel resultLabel;
+    private javax.swing.JPanel resultPromptPane;
     private javax.swing.JPanel selectedImage;
     private javax.swing.JButton setImage;
-    private javax.swing.JTextArea watsonInfo;
+    private javax.swing.JButton testerButton;
+    private javax.swing.JButton userButton;
+    private javax.swing.JDialog userTypeDialog;
+    private javax.swing.JButton yesButton;
     // End of variables declaration//GEN-END:variables
 }
