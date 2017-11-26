@@ -418,6 +418,7 @@ public class gui extends javax.swing.JFrame {
 				    	// test to open the receipe website 
 				    	// Need to replace "" with %20 since url does not take ""
 				    	/* ****************** */
+                        recipeText.setText(ingredients);
 						container.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 						b.setEnabled(true);
 			    	}else {
