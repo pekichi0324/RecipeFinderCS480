@@ -307,14 +307,14 @@ public class gui extends javax.swing.JFrame {
 
 
 
-                        watsonInfo.setText(ingredients);
+                        
 
 				    	
 				    	// test to open the receipe website 
 				    	// Need to replace "" with %20 since url does not take ""
 				    	/* ****************** */
 		
-						watsonInfo.setText(result.toString());
+                        watsonInfo.setText(ingredients);
 
 						container.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 						b.setEnabled(true);
