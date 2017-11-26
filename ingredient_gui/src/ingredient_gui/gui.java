@@ -24,6 +24,7 @@ import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
 import javax.imageio.ImageIO;
@@ -31,6 +32,10 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -269,13 +274,40 @@ public class gui extends javax.swing.JFrame {
 				    		System.out.println(classResult.get(z).getScore());
 				    	}
 				    	
-				    	
-				    	
-				    	
-				    	
-				    	/* ****************** */
-		
-						watsonInfo.setText(result.toString());
+				    	String searchTerm = classResult.get(0).getClassName().replaceAll(" ","%20"); 
+				    	//TODO CLEAN UP CODE
+                        HtmlUnitDriver driver;
+                        String baseUrl;
+                        final String key = searchTerm;
+                        driver = new HtmlUnitDriver();
+                        baseUrl = "http://allrecipes.com/";
+                        driver.get(baseUrl);
+                        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+                        driver.findElement(By.xpath("//input[@id='searchText']")).sendKeys(key);
+                        driver.findElement(By.xpath("//button")).click();
+                        System.out.println("Driver url: " + driver.getCurrentUrl());
+                        driver.get("http://allrecipes.com/search/results/?wt=" + key + "&sort=re");
+                        driver.findElement(By.xpath("//li/img")).click();
+                        System.out.println("Driver url: " + driver.getCurrentUrl());
+                        //THIS LINE BELOW IS THE REASON IT ONLY WORKS WITH HAMBURGER, Someone try to figure it out
+                        WebElement elem = driver.findElement(By.cssSelector("h3.ng-isolate-scope"));
+                        elem.click();
+                        System.out.println("Driver url: " + driver.getCurrentUrl());
+                        driver.findElement(By.xpath("//a[@id='print-recipe']")).click();
+                        driver.get(driver.getCurrentUrl() + "/print/?recipeType=Recipe&servings=1&isMetric=false");
+                        String url_open =driver.getCurrentUrl();
+                        //java.awt.Desktop.getDesktop().browse(java.net.URI.create(url_open));
+                        String ingredients = driver.findElement(By.xpath("//div[@class='recipe-print__column1']")).getText();
+                        System.out.println(ingredients);
+                        driver.quit();
+                        java.awt.Desktop.getDesktop().browse(java.net.URI.create(url_open));
+
+
+                        /* ** */
+
+
+
+                        watsonInfo.setText(ingredients);
 						container.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 						b.setEnabled(true);
 			    	}else {
