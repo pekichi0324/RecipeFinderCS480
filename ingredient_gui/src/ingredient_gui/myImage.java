@@ -21,7 +21,18 @@ public class myImage {
 		try {
 			bufImage = ImageIO.read(file);
 		} catch (IOException e) {
-			System.out.println("should never happen");
+			System.out.println("Exception: myImage(String)");
+		}
+		image = new ImageIcon(imagePath);
+	}
+	public myImage(File f) {
+		imagePath = f.getAbsolutePath();
+		file = f;
+		try {
+			bufImage = ImageIO.read(file);
+		}
+		catch (IOException e) {
+			System.out.println("Exception: myImage(File)");
 		}
 		image = new ImageIcon(imagePath);
 	}

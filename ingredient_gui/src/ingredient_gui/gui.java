@@ -21,6 +21,7 @@ import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import org.openqa.selenium.By;
@@ -47,10 +49,19 @@ import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassResult;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifiedImage;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifiedImages;
 import com.ibm.watson.developer_cloud.visual_recognition.v3.model.ClassifyOptions;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.awt.dnd.DropTargetListener;
 import javax.swing.DropMode;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
+import javax.swing.TransferHandler;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -58,12 +69,13 @@ import javax.swing.event.ListSelectionListener;
  *
  * @author Evan
  */
-public class gui extends javax.swing.JFrame {
-	private myImage[] imgNames = new ImageList().getImageNames();
+public class gui extends JFrame implements DropTargetListener {
+	private ArrayList<myImage> imgNames = new ArrayList<myImage>();
         private ListSelectionModel listSelectionModel;
 	private VisualRecognition service = new VisualRecognition(
 			  VisualRecognition.VERSION_DATE_2016_05_20
 			);
+        private TransferHandler listTransfer;
 	final int norm = NORMAL;
 	final int imageHeight = 800;
 	final int imageWidth = 525;
@@ -80,6 +92,10 @@ public class gui extends javax.swing.JFrame {
     }
   
     public void start() {
+    	myImage[] imgArr = new ImageList().getImageNames();
+    	for (myImage m : imgArr) {
+    		imgNames.add(m);
+    	}
     	
     	/* OLD KEY */
 //    	service.setApiKey("af16cab33a7b47433d5ce63aace1d08f379afa2a");
@@ -92,15 +108,15 @@ public class gui extends javax.swing.JFrame {
                             new ListSelectionListener() {
                                 public void valueChanged(ListSelectionEvent e) {
                                     int i = imageList.getSelectedIndex();
-                                    img.setIcon(imgNames[i].scale(imageHeight, imageWidth, norm));
+                                    img.setIcon(imgNames.get(i).scale(imageHeight, imageWidth, norm));
                                 }
-                            });
+                            }); // changes the main image to whichever one is selected
         listSelectionModel.setSelectionMode(
                         ListSelectionModel.SINGLE_SELECTION); // only single selection
     	
     	System.out.println("imageHeight: " + imageHeight);
         ImageIcon icon = null;
-        icon = imgNames[0].scale(imageHeight, imageWidth, norm);
+        icon = imgNames.get(0).scale(imageHeight, imageWidth, norm);
 		if(icon != null) {
 			img.setIcon(icon);
 		}else {
@@ -110,7 +126,7 @@ public class gui extends javax.swing.JFrame {
 		imageList.setLayoutOrientation(javax.swing.JList.HORIZONTAL_WRAP);
         imageList.setCellRenderer(new ImgRenderer());
         imageList.setVisibleRowCount(1);
-    	imageList.setListData(imgNames);
+    	imageList.setListData(imgNames.toArray());
         
     	imageSelect.setViewportView(imageList);
     	imageSelect.setVerticalScrollBarPolicy(
@@ -119,7 +135,17 @@ public class gui extends javax.swing.JFrame {
     	img.setSize(d);
     	img.setMinimumSize(d);
     	img.setMaximumSize(d);
+        
+        initDragDrop(); // enable drag-and-drop activity for images
     }
+    
+    private void initDragDrop() {
+        DropTarget dropTarget = new DropTarget(imageList, this);
+        imageList.setDropMode(DropMode.INSERT);
+        imageList.setDragEnabled(true);
+        imageList.setTransferHandler(new ImageTransferHandler());
+    }
+    
     public static boolean isInternetReachable()
     {
         try {
@@ -172,7 +198,7 @@ public class gui extends javax.swing.JFrame {
     private void initComponents() {
 
         recipeDialog = new javax.swing.JDialog();
-        imgRecipe = new javax.swing.JPanel();
+        imgRecipePanel = new javax.swing.JPanel();
         imgRecipeLabel = new javax.swing.JLabel();
         resultPromptPane = new javax.swing.JPanel();
         resultLabel = new javax.swing.JLabel();
@@ -188,16 +214,16 @@ public class gui extends javax.swing.JFrame {
 
         recipeDialog.setName("recipeDialog"); // NOI18N
 
-        imgRecipe.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        imgRecipePanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        javax.swing.GroupLayout imgRecipeLayout = new javax.swing.GroupLayout(imgRecipe);
-        imgRecipe.setLayout(imgRecipeLayout);
-        imgRecipeLayout.setHorizontalGroup(
-            imgRecipeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout imgRecipePanelLayout = new javax.swing.GroupLayout(imgRecipePanel);
+        imgRecipePanel.setLayout(imgRecipePanelLayout);
+        imgRecipePanelLayout.setHorizontalGroup(
+            imgRecipePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(imgRecipeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 550, Short.MAX_VALUE)
         );
-        imgRecipeLayout.setVerticalGroup(
-            imgRecipeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        imgRecipePanelLayout.setVerticalGroup(
+            imgRecipePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(imgRecipeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
@@ -206,6 +232,11 @@ public class gui extends javax.swing.JFrame {
         resultLabel.setText("Is this result accurate?");
 
         noButton.setText("No");
+        noButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                noButtonActionPerformed(evt);
+            }
+        });
 
         yesButton.setText("Yes");
         yesButton.addActionListener(new java.awt.event.ActionListener() {
@@ -251,7 +282,7 @@ public class gui extends javax.swing.JFrame {
         recipeDialogLayout.setHorizontalGroup(
             recipeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, recipeDialogLayout.createSequentialGroup()
-                .addComponent(imgRecipe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(imgRecipePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(recipeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(recipeDialogLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 407, Short.MAX_VALUE)
@@ -263,7 +294,7 @@ public class gui extends javax.swing.JFrame {
         );
         recipeDialogLayout.setVerticalGroup(
             recipeDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(imgRecipe, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(imgRecipePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(recipeDialogLayout.createSequentialGroup()
                 .addComponent(recipeScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 441, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -328,7 +359,6 @@ public class gui extends javax.swing.JFrame {
 
     private void setImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setImageActionPerformed
         //String returnedInfo = "PUT WATSON INFO HERE";
-        // recipeDialog;
     	final int i = imageList.getSelectedIndex();
     	final JButton b = (JButton) evt.getSource();
         
@@ -339,10 +369,10 @@ public class gui extends javax.swing.JFrame {
         	int x = 0;
 			public void run() {
 				if(i < 0) {
-		    		f = new File(imgNames[0].getPath());
+		    		f = new File(imgNames.get(0).getPath());
 		    	}
 		    	else {
-		    		f = new File(imgNames[i].getPath());
+		    		f = new File(imgNames.get(i).getPath());
 		    	}
 			    try{
 			    	InputStream imagesStream = new FileInputStream(f);
@@ -354,7 +384,7 @@ public class gui extends javax.swing.JFrame {
 			    	if(isInternetReachable()) {
 				    	ClassifyOptions classifyOptions = new ClassifyOptions.Builder()
 				    	  .imagesFile(imagesStream)
-				    	  .imagesFilename(imgNames[x].getImageName())
+				    	  .imagesFilename(imgNames.get(x).getImageName())
 				    	  .build();
 				    	ClassifiedImages result = service.classify(classifyOptions).execute();
 				    	
@@ -433,12 +463,12 @@ public class gui extends javax.swing.JFrame {
 		Thread watson = new Thread(watsonThread);
 		watson.start();
 		if(i < 0) {
-			img.setIcon(imgNames[0].scale(imageHeight, imageWidth, norm));
+			img.setIcon(imgNames.get(0).scale(imageHeight, imageWidth, norm));
     		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     		b.setEnabled(false);
     	}
     	else {
-    		img.setIcon(imgNames[i].scale(imageHeight, imageWidth, norm));
+    		img.setIcon(imgNames.get(i).scale(imageHeight, imageWidth, norm));
     		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     		b.setEnabled(false);
     	}
@@ -449,18 +479,23 @@ public class gui extends javax.swing.JFrame {
         int i = imageList.getSelectedIndex();
         
         if (i < 0) {
-            imgRecipeLabel.setIcon(imgNames[0].scale(imageHeight, imageWidth, norm));
+            imgRecipeLabel.setIcon(imgNames.get(0).scale(imageHeight, imageWidth, norm));
         }
         else {
-            imgRecipeLabel.setIcon(imgNames[i].scale(imageHeight, imageWidth, norm));
+            imgRecipeLabel.setIcon(imgNames.get(i).scale(imageHeight, imageWidth, norm));
         }
         recipeDialog.pack();
+        recipeDialog.setLocationRelativeTo(this); // center dialog on main window
         recipeDialog.setVisible(true);
     }
     
     private void yesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yesButtonActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_yesButtonActionPerformed
+
+    private void noButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_noButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_noButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -512,8 +547,8 @@ public class gui extends javax.swing.JFrame {
     private javax.swing.JList imageList;
     private javax.swing.JScrollPane imageSelect;
     private javax.swing.JLabel img;
-    private javax.swing.JPanel imgRecipe;
     private javax.swing.JLabel imgRecipeLabel;
+    private javax.swing.JPanel imgRecipePanel;
     private javax.swing.JButton noButton;
     private javax.swing.JDialog recipeDialog;
     private javax.swing.JScrollPane recipeScrollPane;
@@ -524,4 +559,39 @@ public class gui extends javax.swing.JFrame {
     private javax.swing.JButton setImage;
     private javax.swing.JButton yesButton;
     // End of variables declaration//GEN-END:variables
+
+    public void dragEnter(DropTargetDragEvent dtde) {
+    }
+
+    public void dragOver(DropTargetDragEvent dtde) {
+    }
+
+    public void dropActionChanged(DropTargetDragEvent dtde) {
+    }
+
+    public void dragExit(DropTargetEvent dte) {
+    }
+
+    public void drop(DropTargetDropEvent evt) {
+    	int action = evt.getDropAction();
+        evt.acceptDrop(action);
+        try {
+            Transferable data = evt.getTransferable();
+            if (data.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+                List<File> files = (List<File>) data.getTransferData(
+                        DataFlavor.javaFileListFlavor);
+                for (File file : files) {
+                	imgNames.add(new myImage(file)); // add the file name to the image name list
+            		imageList.add(new JLabel(new ImageIcon(file.getAbsolutePath()))); // add the new image to the list
+            		
+                }
+            }
+        } catch (UnsupportedFlavorException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            evt.dropComplete(true);
+        }
+    }
 }
