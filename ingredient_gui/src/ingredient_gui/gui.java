@@ -22,6 +22,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -393,60 +394,53 @@ public class gui extends JFrame implements DropTargetListener {
 				    	System.out.println(resultList);
 				    	System.out.println("---");
 //				    	String[] badWords = {"dish", "nutrition", "food"};
+				    	List<ClassResult> finalList = new LinkedList<ClassResult>();
 
 				    	System.out.println(resultList.get(0).getClassifiers().get(0).getClasses().size());
 				    	
 				    	// List of objects of keywords/scores
 				    	List<ClassResult> classResult = resultList.get(0).getClassifiers().get(0).getClasses();
 				    	for (int z = 0; z < resultList.get(0).getClassifiers().get(0).getClasses().size(); z++) {
-//				    		if (classResult.get(z).getClassName().contains(badWords[0]) || classResult.get(z).getClassName().contains(badWords[0])
-//				    					|| classResult.get(z).getClassName().contains(badWords[0])) {
-//				    			classResult.remove(classResult.get(z));
-//				    		}
+				    		if (classResult.get(z).getTypeHierarchy() != null) {
+				    			finalList.add(classResult.get(z));
+				    		}
 				    		System.out.println(classResult.get(z).getClassName());
 				    		System.out.println(classResult.get(z).getScore());
 				    	}
 				    	
-				    	String searchTerm = classResult.get(0).getClassName().replaceAll(" ","%20"); 
+				    	Collections.sort(finalList, new ClassifierIdSort());
+				    	Collections.reverse(finalList);
+				    	
+				    
+				    	for (int q = 0; q < finalList.size(); q++) {
+				    		System.out.println(finalList.get(q).getClassName() + " : " + finalList.get(q).getScore());
+				    	}
+				    	
+				    	
+//				    	String searchTerm = classResult.get(0).getClassName().replaceAll(" ","%20"); 
+				    	String searchTerm = finalList.get(0).getClassName().replaceAll(" ", "%20");
 				    	//TODO CLEAN UP CODE
                         HtmlUnitDriver driver;
-                        String baseUrl;
-                        final String key = searchTerm;
                         driver = new HtmlUnitDriver();
-                        baseUrl = "http://allrecipes.com/";
-                        driver.get(baseUrl);
-                        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-                        driver.findElement(By.xpath("//input[@id='searchText']")).sendKeys(key);
-                        driver.findElement(By.xpath("//button")).click();
-                        System.out.println("Driver url: " + driver.getCurrentUrl());
-                        driver.get("http://allrecipes.com/search/results/?wt=" + key + "&sort=re");
-                        driver.findElement(By.xpath("//li/img")).click();
-                        System.out.println("Driver url: " + driver.getCurrentUrl());
-                        //THIS LINE BELOW IS THE REASON IT ONLY WORKS WITH HAMBURGER, Someone try to figure it out
-                        WebElement elem = driver.findElement(By.cssSelector("h3.ng-isolate-scope"));
-                        elem.click();
-                        System.out.println("Driver url: " + driver.getCurrentUrl());
-                        driver.findElement(By.xpath("//a[@id='print-recipe']")).click();
-                        driver.get(driver.getCurrentUrl() + "/print/?recipeType=Recipe&servings=1&isMetric=false");
-                        String url_open =driver.getCurrentUrl();
-                        //java.awt.Desktop.getDesktop().browse(java.net.URI.create(url_open));
-                        String ingredients = driver.findElement(By.xpath("//div[@class='recipe-print__column1']")).getText();
-                        System.out.println(ingredients);
-                        driver.quit();
-                        java.awt.Desktop.getDesktop().browse(java.net.URI.create(url_open));
-
-
-                        /* ** */
-
-
+//                      driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+                        
+                        driver.get("http://www.bigoven.com/recipes/" + searchTerm + "/best");
+                        driver.findElement(By.xpath("//div[2]/div/div/a/img")).click();
+                        System.out.println("New place: "+driver.getCurrentUrl());
+                        String ingredients = driver.findElement(By.xpath("//div[@class='ingredients']")).getText();
 
                         
-
-				    	
-				    	// test to open the receipe website 
-				    	// Need to replace "" with %20 since url does not take ""
+                        String title = driver.findElement(By.xpath("//h1")).getText();
+                        String directions = driver.findElement(By.xpath("//div[@class='recipe-instructions']")).getText();
+                        String url_open = driver.getCurrentUrl();
+                        driver.quit();
+                        java.awt.Desktop.getDesktop().browse(java.net.URI.create(url_open));
+                        
 				    	/* ****************** */
-                        recipeText.setText(ingredients);
+//                        recipeText.setText(ingredients);
+                        recipeText.setText(title + "\n-----------------------------\n" +ingredients +
+                                "\nDirections" + "\n-----------------------------\n" + directions);
+                        
 						container.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 						b.setEnabled(true);
 			    	}else {
