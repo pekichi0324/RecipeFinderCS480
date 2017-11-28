@@ -6,6 +6,9 @@
 package ingredient_gui;
 
 import javax.swing.*;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.io.File;
@@ -17,6 +20,7 @@ class ImageTransferHandler extends TransferHandler {
     @Override
     protected Transferable createTransferable(JComponent c) {
         JList list = (JList) c;
+    	DefaultListModel dm = (DefaultListModel)list.getModel();
         ArrayList<File> files = new ArrayList<File>();
         for (Object obj: list.getSelectedValuesList()) {
             files.add((File)obj);

@@ -57,6 +57,8 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
+
+import javax.swing.DefaultListModel;
 import javax.swing.DropMode;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -415,9 +417,11 @@ public class gui extends JFrame implements DropTargetListener {
                         driver = new HtmlUnitDriver();
                         baseUrl = "http://allrecipes.com/";
                         driver.get(baseUrl);
-                        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-                        driver.findElement(By.xpath("//input[@id='searchText']")).sendKeys(key);
-                        driver.findElement(By.xpath("//button")).click();
+                        /*
+                         * driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+                         * driver.findElement(By.xpath("//input[@id='searchText']")).sendKeys(key);
+                         * driver.findElement(By.xpath("//button")).click();
+                        */
                         System.out.println("Driver url: " + driver.getCurrentUrl());
                         driver.get("http://allrecipes.com/search/results/?wt=" + key + "&sort=re");
                         driver.findElement(By.xpath("//li/img")).click();
@@ -433,15 +437,7 @@ public class gui extends JFrame implements DropTargetListener {
                         String ingredients = driver.findElement(By.xpath("//div[@class='recipe-print__column1']")).getText();
                         System.out.println(ingredients);
                         driver.quit();
-                        java.awt.Desktop.getDesktop().browse(java.net.URI.create(url_open));
-
-
-                        /* ** */
-
-
-
                         
-
 				    	
 				    	// test to open the receipe website 
 				    	// Need to replace "" with %20 since url does not take ""
@@ -460,6 +456,7 @@ public class gui extends JFrame implements DropTargetListener {
 		};
 		Thread watson = new Thread(watsonThread);
 		watson.start();
+        recipeText.setText("Please wait...");
 		if(i < 0) {
 			img.setIcon(imgNames.get(0).scale(imageHeight, imageWidth, norm));
     		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -540,6 +537,35 @@ public class gui extends JFrame implements DropTargetListener {
         }
         return dbi;
     }
+    
+    // TransferListener methods BEGIN
+    public void dragEnter(DropTargetDragEvent dtde) {}
+    public void dragOver(DropTargetDragEvent dtde) {}
+    public void dropActionChanged(DropTargetDragEvent dtde) {}
+    public void dragExit(DropTargetEvent dte) {}
+    public void drop(DropTargetDropEvent evt) {
+    	int action = evt.getDropAction();
+        evt.acceptDrop(action);
+        try {
+            Transferable data = evt.getTransferable();
+            if (data.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+                List<File> files = (List<File>) data.getTransferData(
+                        DataFlavor.javaFileListFlavor);
+                for (File file : files) {
+                	System.out.println(file.getAbsolutePath());
+                	imgNames.add(new myImage(file)); // add the file name to the image name list
+            		imageList.setListData(imgNames.toArray());
+                }
+            }
+        } catch (UnsupportedFlavorException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            evt.dropComplete(true);
+        }
+    }
+    // TransferListener methods END
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList imageList;
@@ -558,39 +584,4 @@ public class gui extends JFrame implements DropTargetListener {
     private javax.swing.JButton yesButton;
     // End of variables declaration//GEN-END:variables
 
-    public void dragEnter(DropTargetDragEvent dtde) {
-    }
-
-    public void dragOver(DropTargetDragEvent dtde) {
-    }
-
-    public void dropActionChanged(DropTargetDragEvent dtde) {
-    }
-
-    public void dragExit(DropTargetEvent dte) {
-    }
-
-    public void drop(DropTargetDropEvent evt) {
-    	int action = evt.getDropAction();
-        evt.acceptDrop(action);
-        try {
-            Transferable data = evt.getTransferable();
-            if (data.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-                List<File> files = (List<File>) data.getTransferData(
-                        DataFlavor.javaFileListFlavor);
-                for (File file : files) {
-                	System.out.println(file.getAbsolutePath());
-                	imgNames.add(new myImage(file)); // add the file name to the image name list
-            		imageList.add(new JLabel(new ImageIcon(file.getAbsolutePath()))); // add the new image to the list
-            		
-                }
-            }
-        } catch (UnsupportedFlavorException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            evt.dropComplete(true);
-        }
-    }
 }
