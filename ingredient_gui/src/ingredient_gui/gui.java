@@ -304,9 +304,6 @@ public class gui extends JFrame implements DropTargetListener {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        img.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/donut platter.jpg"))); // NOI18N
-        img.setText("jLabel1");
-
         javax.swing.GroupLayout selectedImageLayout = new javax.swing.GroupLayout(selectedImage);
         selectedImage.setLayout(selectedImageLayout);
         selectedImageLayout.setHorizontalGroup(
