@@ -44,6 +44,9 @@ public class myImage {
 		}
 		return image;
 	}
+	public File getFile() {
+		return file;
+	}
 	public ImageIcon scale(int imageHeight, int imageWidth, int NORMAL) {
 		if(image == null) {
 			//non scaled version

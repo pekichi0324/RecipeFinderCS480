@@ -18,7 +18,7 @@ class ImageTransferHandler extends TransferHandler {
     protected Transferable createTransferable(JComponent c) {
         JList list = (JList) c;
         ArrayList<File> files = new ArrayList<File>();
-        for (Object obj: list.getSelectedValues()) {
+        for (Object obj: list.getSelectedValuesList()) {
             files.add((File)obj);
         }
         return new FileTransferable(files);

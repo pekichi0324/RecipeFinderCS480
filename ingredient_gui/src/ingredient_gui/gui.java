@@ -92,7 +92,7 @@ public class gui extends JFrame implements DropTargetListener {
     }
   
     public void start() {
-    	myImage[] imgArr = new ImageList().getImageNames();
+    	myImage[] imgArr = new ImageList().getImageNames(); // initialize imgArr with all image names
     	for (myImage m : imgArr) {
     		imgNames.add(m);
     	}
@@ -275,6 +275,7 @@ public class gui extends JFrame implements DropTargetListener {
 
         recipeText.setColumns(20);
         recipeText.setRows(5);
+        recipeText.setText("Loading...");
         recipeScrollPane.setViewportView(recipeText);
 
         javax.swing.GroupLayout recipeDialogLayout = new javax.swing.GroupLayout(recipeDialog.getContentPane());
@@ -578,6 +579,7 @@ public class gui extends JFrame implements DropTargetListener {
                 List<File> files = (List<File>) data.getTransferData(
                         DataFlavor.javaFileListFlavor);
                 for (File file : files) {
+                	System.out.println(file.getAbsolutePath());
                 	imgNames.add(new myImage(file)); // add the file name to the image name list
             		imageList.add(new JLabel(new ImageIcon(file.getAbsolutePath()))); // add the new image to the list
             		
