@@ -22,7 +22,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +82,11 @@ public class gui extends JFrame implements DropTargetListener {
 	final int imageHeight = 800;
 	final int imageWidth = 525;
 	final Container container = this;
-
+	static String [] classifierList = new String[10];
+	static String [] unrelatedList = {"nutrition", "food","beige color","dish", "vegetable" }; 
+	static int currentIndex = 0;
+	
+	
 	//Thread watson = null;
     /**
      * Creates new form gui
@@ -323,8 +326,12 @@ public class gui extends JFrame implements DropTargetListener {
         imageSelect.setViewportView(imageList);
 
         setImage.setText("Choose");
+        
         setImage.addActionListener(new java.awt.event.ActionListener() {
+        	
             public void actionPerformed(java.awt.event.ActionEvent evt) {
+            	//reset the current index since a user just chooses a new picture
+            	currentIndex = 0;
                 setImageActionPerformed(evt);
             }
         });
@@ -395,11 +402,6 @@ public class gui extends JFrame implements DropTargetListener {
 				    	List<ClassifiedImage> resultList = result.getImages();
 				    	System.out.println(resultList);
 				    	System.out.println("---");
-<<<<<<< HEAD
-=======
-//				    	String[] badWords = {"dish", "nutrition", "food"};
-				    	List<ClassResult> finalList = new LinkedList<ClassResult>();
->>>>>>> ba781d882e0b0c5b5542eecb8cedf547ab7c2515
 
 				    	System.out.println(resultList.get(0).getClassifiers().get(0).getClasses().size());
 				    	
@@ -412,7 +414,6 @@ public class gui extends JFrame implements DropTargetListener {
 //				    		if (classResult.get(z).getTypeHierarchy() != null) {
 //				    			finalList.add(classResult.get(z));
 //				    		}
-<<<<<<< HEAD
 //				    		System.out.println(classResult.get(z).getClassName());
 //				    		System.out.println(classResult.get(z).getScore());
 //				    	}			    	
@@ -497,34 +498,6 @@ public class gui extends JFrame implements DropTargetListener {
 						recipeText.setText(title + "\n-----------------------------\n" +ingredients +
 								"\nDirections" + "\n-----------------------------\n" + directions);
                         
-=======
-				    		System.out.println(classResult.get(z).getClassName());
-				    		System.out.println(classResult.get(z).getScore());
-				    	}
-				    	
-				    	String searchTerm = classResult.get(0).getClassName().replaceAll(" ","%20"); 
-				    	//TODO CLEAN UP CODE
-                        HtmlUnitDriver driver;
-                        driver = new HtmlUnitDriver();
-//                      driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-                        
-                        driver.get("http://www.bigoven.com/recipes/" + searchTerm + "/best");
-                        driver.findElement(By.xpath("//div[2]/div/div/a/img")).click();
-                        System.out.println("New place: "+driver.getCurrentUrl());
-                        String ingredients = driver.findElement(By.xpath("//div[@class='ingredients']")).getText();
-
-                        
-                        String title = driver.findElement(By.xpath("//h1")).getText();
-                        String directions = driver.findElement(By.xpath("//div[@class='recipe-instructions']")).getText();
-                        String url_open = driver.getCurrentUrl();
-                        driver.quit();
-                        java.awt.Desktop.getDesktop().browse(java.net.URI.create(url_open));
-                        
-				    	/* ****************** */
-//                        recipeText.setText(ingredients);
-                        recipeText.setText(title + "\n-----------------------------\n" +ingredients +
-                                "\nDirections" + "\n-----------------------------\n" + directions);
->>>>>>> ba781d882e0b0c5b5542eecb8cedf547ab7c2515
                         
 						container.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 						b.setEnabled(true);
@@ -572,7 +545,8 @@ public class gui extends JFrame implements DropTargetListener {
     }//GEN-LAST:event_yesButtonActionPerformed
 
     private void noButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_noButtonActionPerformed
-        // TODO add your handling code here:
+        currentIndex++;
+        setImageActionPerformed(evt);
     }//GEN-LAST:event_noButtonActionPerformed
 
     /**
