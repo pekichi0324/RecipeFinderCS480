@@ -27,6 +27,7 @@ public class myImage {
 	}
 	public myImage(File f) {
 		imagePath = f.getAbsolutePath();
+		imageName = f.getName();
 		file = f;
 		try {
 			bufImage = ImageIO.read(file);

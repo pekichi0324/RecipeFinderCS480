@@ -9,6 +9,7 @@ import java.awt.Button;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
@@ -144,6 +145,8 @@ public class gui extends JFrame implements DropTargetListener {
     	img.setMaximumSize(d);
         
         initDragDrop(); // enable drag-and-drop activity for images
+        recipeText.setEditable(false);
+        recipeText.setWrapStyleWord(true);
     }
     
     private void initDragDrop() {
@@ -237,7 +240,7 @@ public class gui extends JFrame implements DropTargetListener {
         resultPromptPane.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         resultLabel.setText("Is this result accurate?");
-
+        
         noButton.setText("No");
         noButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -412,7 +415,7 @@ public class gui extends JFrame implements DropTargetListener {
 //				    							NICK'S TYPE HIERARCHY IMPLEMENTATION
 				    	List<ClassResult> finalList = new LinkedList<ClassResult>();
 				    	for (int z = 0; z < resultList.get(0).getClassifiers().get(0).getClasses().size(); z++) {
-				    		if (classResult.get(z).getTypeHierarchy() != null) {
+				    		if (classResult.get(z).getTypeHierarchy() != null && classResult.get(z).getTypeHierarchy().contains("food")) {
 				    			finalList.add(classResult.get(z));
 				    		}
 				    		System.out.println(classResult.get(z).getClassName());
@@ -487,30 +490,40 @@ public class gui extends JFrame implements DropTargetListener {
 //				    	// Need to replace "" with %20 since url does not take ""
 //				    	/* ****************** */
 //                        recipeText.setText(ingredients);
-				    	
-				    	HtmlUnitDriver driver;
-				    	driver = new HtmlUnitDriver();
-				    	driver.get("http://www.bigoven.com/recipes/" + searchTerm + "/best");
-				    	driver.findElement(By.xpath("//div[2]/div/div/a/img")).click();
-				    	System.out.println("New place: "+ driver.getCurrentUrl());
-				    	String ingredients = driver.findElement(By.xpath("//div[@class='ingredients']")).getText();
-
-	                        
-				    	String title = driver.findElement(By.xpath("//h1")).getText();
-						String directions = driver.findElement(By.xpath("//div[@class='recipe-instructions']")).getText();
-						String url_open = driver.getCurrentUrl();
-						driver.quit();
-						java.awt.Desktop.getDesktop().browse(java.net.URI.create(url_open));
-	                        
-						recipeText.setText(title + "\n-----------------------------\n" +ingredients +
-								"\nDirections" + "\n-----------------------------\n" + directions);
-                        
-                        
+				    	try {
+					    	HtmlUnitDriver driver;
+					    	driver = new HtmlUnitDriver();
+					    	driver.get("http://www.bigoven.com/recipes/" + searchTerm + "/best");
+					    	driver.findElement(By.xpath("//div[2]/div/div/a/img")).click();
+					    	System.out.println("New place: "+ driver.getCurrentUrl());
+					    	String ingredients = driver.findElement(By.xpath("//div[@class='ingredients']")).getText();
+	
+		                        
+					    	String title = driver.findElement(By.xpath("//h1")).getText();
+							String directions = driver.findElement(By.xpath("//div[@class='recipe-instructions']")).getText();
+							String url_open = driver.getCurrentUrl();
+							driver.quit();
+							//java.awt.Desktop.getDesktop().browse(java.net.URI.create(url_open));
+		                        
+							recipeText.setText(title + "\n-----------------------------\n" +ingredients +
+									"\nDirections" + "\n-----------------------------\n" + directions);
+				    	}catch(Exception e) {
+				    		Font old = recipeText.getFont();
+				    		//float size = font.getSize() + 5.0f;
+				    		//recipeText.setFont( font.deriveFont(size) );
+	                        recipeText.setText("Sorry we were not able to find a recipe\nfor this image. Please try a new one.");	
+	                        yesButton.setEnabled(false);
+	                        noButton.setEnabled(false);
+				    	}
 						container.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 						b.setEnabled(true);
+						yesButton.setEnabled(true);
+                        noButton.setEnabled(true);
 			    	}else {
 			    		container.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			    		b.setEnabled(true);
+			    		yesButton.setEnabled(true);
+                        noButton.setEnabled(true);
 			    	}
 					Thread.sleep(1000);
 			    }catch(Exception e){
@@ -524,15 +537,49 @@ public class gui extends JFrame implements DropTargetListener {
 			img.setIcon(imgNames.get(0).scale(imageHeight, imageWidth, norm));
     		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     		b.setEnabled(false);
+    		yesButton.setEnabled(false);
+            noButton.setEnabled(false);
+    		wait(b);
     	}
     	else {
     		img.setIcon(imgNames.get(i).scale(imageHeight, imageWidth, norm));
     		this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     		b.setEnabled(false);
+    		yesButton.setEnabled(false);
+            noButton.setEnabled(false);
+    		wait(b);
     	}
         
     }//GEN-LAST:event_setImageActionPerformed
+    private void wait(final JButton b) {
+    	Runnable waitThread = new Runnable() {
 
+			public void run() {
+				int counter = 0;
+				while(!b.isEnabled()) {
+					if(counter == 0) {
+						recipeText.setText("Loading.\nPlease wait!");
+					}else if(counter == 1) {
+						recipeText.setText("Loading..\nPlease wait!");
+					}else {
+						recipeText.setText("Loading...\nPlease wait!");
+					}
+					counter++;
+					if(counter>3)
+						counter = 0;
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+    	};
+    	Thread wait = new Thread(waitThread);
+    	wait.start();
+    	
+	}
     private void showRecipeDialog() {
         int i = imageList.getSelectedIndex();
         
@@ -549,11 +596,13 @@ public class gui extends JFrame implements DropTargetListener {
     
     private void yesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yesButtonActionPerformed
         // TODO add your handling code here:
+    	System.out.println("Yes pressed!");
     }//GEN-LAST:event_yesButtonActionPerformed
 
     private void noButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_noButtonActionPerformed
-        currentIndex++;
-        setImageActionPerformed(evt);
+       // currentIndex++;
+        //setImageActionPerformed(evt);
+    	System.out.println("No pressed!");
     }//GEN-LAST:event_noButtonActionPerformed
 
     /**
