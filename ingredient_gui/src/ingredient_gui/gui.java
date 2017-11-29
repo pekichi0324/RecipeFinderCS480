@@ -394,6 +394,7 @@ public class gui extends JFrame implements DropTargetListener {
 			    	else
 			    		x = i;
 			    	if(isInternetReachable()) {
+			    		String searchTerm = "THISISANERROR";
 				    	ClassifyOptions classifyOptions = new ClassifyOptions.Builder()
 				    	  .imagesFile(imagesStream)
 				    	  .imagesFilename(imgNames.get(x).getImageName())
@@ -420,15 +421,15 @@ public class gui extends JFrame implements DropTargetListener {
 				    		}
 				    		System.out.println(classResult.get(z).getClassName());
 				    		System.out.println(classResult.get(z).getScore());
-				    	}			    	
-				    	Collections.sort(finalList, new ClassifierIdSort());
-				    	Collections.reverse(finalList);			    
-				    	for (int q = 0; q < finalList.size(); q++) {
-				    		System.out.println(finalList.get(q).getClassName() + " : " + finalList.get(q).getScore());
 				    	}
-				    	String searchTerm = finalList.get(0).getClassName().replaceAll(" ", "%20");
-				    	
-				    	
+				    	if(!finalList.isEmpty()) {
+				    		Collections.sort(finalList, new ClassifierIdSort());
+				    		Collections.reverse(finalList);			    
+				    		for (int q = 0; q < finalList.size(); q++) {
+				    			System.out.println(finalList.get(q).getClassName() + " : " + finalList.get(q).getScore());
+				    		}
+				    		searchTerm = finalList.get(0).getClassName().replaceAll(" ", "%20");
+				    	}
 				    	
 				    	
 				    	
@@ -493,20 +494,26 @@ public class gui extends JFrame implements DropTargetListener {
 				    	try {
 					    	HtmlUnitDriver driver;
 					    	driver = new HtmlUnitDriver();
-					    	driver.get("http://www.bigoven.com/recipes/" + searchTerm + "/best");
-					    	driver.findElement(By.xpath("//div[2]/div/div/a/img")).click();
-					    	System.out.println("New place: "+ driver.getCurrentUrl());
-					    	String ingredients = driver.findElement(By.xpath("//div[@class='ingredients']")).getText();
+					    	if(searchTerm!="THISISANERROR"){
+					    		driver.get("http://www.bigoven.com/recipes/" + searchTerm + "/best");
+					    		driver.findElement(By.xpath("//div[2]/div/div/a/img")).click();
+					    		System.out.println("New place: "+ driver.getCurrentUrl());
+					    		String ingredients = driver.findElement(By.xpath("//div[@class='ingredients']")).getText();
 	
 		                        
-					    	String title = driver.findElement(By.xpath("//h1")).getText();
-							String directions = driver.findElement(By.xpath("//div[@class='recipe-instructions']")).getText();
-							String url_open = driver.getCurrentUrl();
-							driver.quit();
+					    		String title = driver.findElement(By.xpath("//h1")).getText();
+					    		String directions = driver.findElement(By.xpath("//div[@class='recipe-instructions']")).getText();
+					    		String url_open = driver.getCurrentUrl();
+					    		driver.quit();
 							//java.awt.Desktop.getDesktop().browse(java.net.URI.create(url_open));
 		                        
-							recipeText.setText(title + "\n-----------------------------\n" +ingredients +
-									"\nDirections" + "\n-----------------------------\n" + directions);
+					    		recipeText.setText(title + "\n-----------------------------\n" +ingredients +
+					    				"\nDirections" + "\n-----------------------------\n" + directions);
+					    	}else {
+					    		recipeText.setText("Sorry we were not able to find a recipe\nfor this image. Please try a new one.");	
+		                        yesButton.setEnabled(false);
+		                        noButton.setEnabled(false);
+					    	}
 				    	}catch(Exception e) {
 				    		Font old = recipeText.getFont();
 				    		//float size = font.getSize() + 5.0f;
