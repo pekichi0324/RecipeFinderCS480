@@ -411,13 +411,6 @@ public class gui extends JFrame implements DropTargetListener {
 				    		System.out.println(classResult.get(z).getScore());
 				    	}
 				    	
-				    	Collections.sort(finalList, new ClassifierIdSort());
-				    	Collections.reverse(finalList);
-				    	
-				    
-				    	for (int q = 0; q < finalList.size(); q++) {
-				    		System.out.println(finalList.get(q).getClassName() + " : " + finalList.get(q).getScore());
-				    	}
 				    	String searchTerm = classResult.get(0).getClassName().replaceAll(" ","%20"); 
 				    	//TODO CLEAN UP CODE
                         HtmlUnitDriver driver;
