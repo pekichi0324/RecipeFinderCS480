@@ -82,7 +82,11 @@ public class gui extends JFrame implements DropTargetListener {
 	final int imageHeight = 800;
 	final int imageWidth = 525;
 	final Container container = this;
-
+	static String [] classifierList = new String[10];
+	static String [] unrelatedList = {"nutrition", "food","beige color","dish", "vegetable" }; 
+	static int currentIndex = 0;
+	
+	
 	//Thread watson = null;
     /**
      * Creates new form gui
@@ -322,8 +326,12 @@ public class gui extends JFrame implements DropTargetListener {
         imageSelect.setViewportView(imageList);
 
         setImage.setText("Choose");
+        
         setImage.addActionListener(new java.awt.event.ActionListener() {
+        	
             public void actionPerformed(java.awt.event.ActionEvent evt) {
+            	//reset the current index since a user just chooses a new picture
+            	currentIndex = 0;
                 setImageActionPerformed(evt);
             }
         });
@@ -405,11 +413,22 @@ public class gui extends JFrame implements DropTargetListener {
 //				    					|| classResult.get(z).getClassName().contains(badWords[0])) {
 //				    			classResult.remove(classResult.get(z));
 //				    		}
-				    		System.out.println(classResult.get(z).getClassName());
-				    		System.out.println(classResult.get(z).getScore());
+				    		int j = 0;
+				    		while  (j < unrelatedList.length ){
+				    			if (classResult.get(currentIndex).getClassName() == unrelatedList[j] || 
+				    					classResult.get(currentIndex).getClassName().contains("beans") ||
+				    					classResult.get(currentIndex).getClassName().contains("bean") ||
+				    					classResult.get(currentIndex).getClassName().contains("color")
+				    					)
+				    				currentIndex++;
+				    			else
+				    				break;
+				    		}
+				    		System.out.println(classResult.get(currentIndex).getClassName());
+				    		System.out.println(classResult.get(currentIndex).getScore());
 				    	}
-				    	
-				    	String searchTerm = classResult.get(0).getClassName().replaceAll(" ","%20"); 
+				    	classifierList[currentIndex]= classResult.get(currentIndex).getClassName();
+				    	String searchTerm = classResult.get(currentIndex).getClassName().replaceAll(" ","%20"); 
 				    	//TODO CLEAN UP CODE
                         HtmlUnitDriver driver;
                         String baseUrl;
@@ -489,7 +508,8 @@ public class gui extends JFrame implements DropTargetListener {
     }//GEN-LAST:event_yesButtonActionPerformed
 
     private void noButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_noButtonActionPerformed
-        // TODO add your handling code here:
+        currentIndex++;
+        setImageActionPerformed(evt);
     }//GEN-LAST:event_noButtonActionPerformed
 
     /**
