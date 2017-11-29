@@ -22,6 +22,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -409,45 +410,51 @@ public class gui extends JFrame implements DropTargetListener {
 				    	List<ClassResult> classResult = resultList.get(0).getClassifiers().get(0).getClasses();
 				    	
 //				    							NICK'S TYPE HIERARCHY IMPLEMENTATION
-//				    	List<ClassResult> finalList = new LinkedList<ClassResult>();
-//				    	for (int z = 0; z < resultList.get(0).getClassifiers().get(0).getClasses().size(); z++) {
-//				    		if (classResult.get(z).getTypeHierarchy() != null) {
-//				    			finalList.add(classResult.get(z));
-//				    		}
-//				    		System.out.println(classResult.get(z).getClassName());
-//				    		System.out.println(classResult.get(z).getScore());
-//				    	}			    	
-//				    	Collections.sort(finalList, new ClassifierIdSort());
-//				    	Collections.reverse(finalList);			    
-//				    	for (int q = 0; q < finalList.size(); q++) {
-//				    		System.out.println(finalList.get(q).getClassName() + " : " + finalList.get(q).getScore());
-//				    	}
-				    	
-				    	
-				    	
-				    	
+				    	List<ClassResult> finalList = new LinkedList<ClassResult>();
 				    	for (int z = 0; z < resultList.get(0).getClassifiers().get(0).getClasses().size(); z++) {
-
-				    		int j = 0;
-				    		while  (j < unrelatedList.length ){
-				    			if (classResult.get(currentIndex).getClassName() == unrelatedList[j] || 
-				    					classResult.get(currentIndex).getClassName().contains("beans") ||
-				    					classResult.get(currentIndex).getClassName().contains("bean") ||
-				    					classResult.get(currentIndex).getClassName().contains("color")
-				    					)
-				    				currentIndex++;
-				    			else
-				    				break;
+				    		if (classResult.get(z).getTypeHierarchy() != null) {
+				    			finalList.add(classResult.get(z));
 				    		}
-				    		System.out.println(classResult.get(currentIndex).getClassName());
-				    		System.out.println(classResult.get(currentIndex).getScore());
+				    		System.out.println(classResult.get(z).getClassName());
+				    		System.out.println(classResult.get(z).getScore());
+				    	}			    	
+				    	Collections.sort(finalList, new ClassifierIdSort());
+				    	Collections.reverse(finalList);			    
+				    	for (int q = 0; q < finalList.size(); q++) {
+				    		System.out.println(finalList.get(q).getClassName() + " : " + finalList.get(q).getScore());
 				    	}
-				    	classifierList[currentIndex]= classResult.get(currentIndex).getClassName();
-				    	String searchTerm = classResult.get(currentIndex).getClassName().replaceAll(" ","%20"); 
+				    	String searchTerm = finalList.get(0).getClassName().replaceAll(" ", "%20");
 				    	
-				    	//TODO CLEAN UP CODE
 				    	
-//				    	BIG OVEN CHANGES HERE
+				    	
+				    	
+				    	
+//				    										JINJINGS IMPLEMENTATION-
+//				    	for (int z = 0; z < resultList.get(0).getClassifiers().get(0).getClasses().size(); z++) {
+//
+//				    		int j = 0;
+//				    		while  (j < unrelatedList.length ){
+//				    			if (classResult.get(currentIndex).getClassName() == unrelatedList[j] || 
+//				    					classResult.get(currentIndex).getClassName().contains("beans") ||
+//				    					classResult.get(currentIndex).getClassName().contains("bean") ||
+//				    					classResult.get(currentIndex).getClassName().contains("color")
+//				    					)
+//				    				currentIndex++;
+//				    			else
+//				    				break;
+//				    		}
+//				    		System.out.println(classResult.get(currentIndex).getClassName());
+//				    		System.out.println(classResult.get(currentIndex).getScore());
+//				    	}
+//				    	classifierList[currentIndex]= classResult.get(currentIndex).getClassName();
+//				    	String searchTerm = classResult.get(currentIndex).getClassName().replaceAll(" ","%20"); 
+				    	
+
+				    	
+				    	
+				    	
+				    	
+//				    											BIG OVEN CHANGES HERE (ORIGINAL ALLRECIPE)
 //                        HtmlUnitDriver driver;
 //                        String baseUrl;
 //                        final String key = searchTerm;
