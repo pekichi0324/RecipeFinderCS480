@@ -80,6 +80,7 @@ public class gui extends JFrame implements DropTargetListener {
 			  VisualRecognition.VERSION_DATE_2016_05_20
 			);
         private TransferHandler listTransfer;
+        private JLabel titleLabel;
 	final int norm = NORMAL;
 	final int imageHeight = 800;
 	final int imageWidth = 525;
@@ -494,6 +495,7 @@ public class gui extends JFrame implements DropTargetListener {
 //                        recipeText.setText(ingredients);
 				    	try {
 					    	HtmlUnitDriver driver;
+					    	Font old;
 					    	driver = new HtmlUnitDriver();
 					    	if(searchTerm!="THISISANERROR"){
 					    		driver.get("http://www.bigoven.com/recipes/" + searchTerm + "/best");
@@ -508,7 +510,15 @@ public class gui extends JFrame implements DropTargetListener {
 					    		driver.quit();
 							//java.awt.Desktop.getDesktop().browse(java.net.URI.create(url_open));
 		                        
-					    		recipeText.setText(title + "\n-----------------------------\n" +ingredients +
+					    		titleLabel = new JLabel(title);
+					    		System.out.println(recipeText.getSize().getWidth());
+					    		titleLabel.setSize(new Dimension(539, 30)); // x, y
+					    		old = recipeText.getFont();
+					    		float size = old.getSize() + 5.0f;
+					    		titleLabel.setFont(old.deriveFont(size));
+					    		recipeText.setText("");
+					    		recipeText.add(titleLabel);
+					    		recipeText.append("\n-----------------------------\n" +ingredients +
 					    				"\nDirections" + "\n-----------------------------\n" + directions);
 					    	}else {
 					    		recipeText.setText("Sorry we were not able to find a recipe\nfor this image. Please try a new one.");	
@@ -564,6 +574,7 @@ public class gui extends JFrame implements DropTargetListener {
 
 			public void run() {
 				int counter = 0;
+				recipeText.remove(titleLabel);
 				while(!b.isEnabled()) {
 					if(counter == 0) {
 						recipeText.setText("Loading.\nPlease wait!");
