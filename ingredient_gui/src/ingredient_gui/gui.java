@@ -146,6 +146,7 @@ public class gui extends JFrame implements DropTargetListener {
         
         initDragDrop(); // enable drag-and-drop activity for images
         recipeText.setEditable(false);
+        recipeText.setLineWrap(true);
         recipeText.setWrapStyleWord(true);
     }
     
