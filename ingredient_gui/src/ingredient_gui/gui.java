@@ -659,8 +659,18 @@ public class gui extends JFrame implements DropTargetListener {
 					    		String directions = driver.findElement(By.xpath("//div[@class='recipe-instructions']")).getText();
 					    		String url_open = driver.getCurrentUrl();
 					    		driver.quit();
+					    		
+
+					    		titleLabel = new JLabel(title);
+					    		System.out.println(recipeText.getSize().getWidth());
+					    		titleLabel.setSize(new Dimension(539, 30)); // x, y
+					    		Font old = recipeText.getFont();
+					    		float size = old.getSize() + 5.0f;
+					    		titleLabel.setFont(old.deriveFont(size));
 		   
-					    		recipeText.setText(title + "\n-----------------------------\n" +ingredients +
+					    		recipeText.setText("");
+					    		recipeText.add(titleLabel);
+					    		recipeText.setText("\n-----------------------------\n" +ingredients +
 					    				"\nDirections" + "\n-----------------------------\n" + directions);
 					    	}else {
 					    		recipeText.setText("Sorry we were not able to find a recipe\nfor this image. Please try a new one.");	
