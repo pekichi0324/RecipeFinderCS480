@@ -88,7 +88,7 @@ public class gui extends JFrame implements DropTargetListener {
 	static String [] classifierList = new String[10];
 	static String [] unrelatedList = {"nutrition", "food","beige color","dish", "vegetable" }; 
 	static int currentIndex = 0;
-	
+	static List<ClassResult> myList;
 	
 	//Thread watson = null;
     /**
@@ -426,11 +426,12 @@ public class gui extends JFrame implements DropTargetListener {
 				    	}
 				    	if(!finalList.isEmpty()) {
 				    		Collections.sort(finalList, new ClassifierIdSort());
-				    		Collections.reverse(finalList);			    
+				    		Collections.reverse(finalList);
+				    		myList = finalList;
 				    		for (int q = 0; q < finalList.size(); q++) {
 				    			System.out.println(finalList.get(q).getClassName() + " : " + finalList.get(q).getScore());
 				    		}
-				    		searchTerm = finalList.get(0).getClassName().replaceAll(" ", "%20");
+				    		searchTerm = finalList.get(currentIndex).getClassName().replaceAll(" ", "%20");
 				    	}
 				    	
 				    	
@@ -574,7 +575,9 @@ public class gui extends JFrame implements DropTargetListener {
 
 			public void run() {
 				int counter = 0;
-				recipeText.remove(titleLabel);
+				if (titleLabel != null) {
+					recipeText.remove(titleLabel);
+				}
 				while(!b.isEnabled()) {
 					if(counter == 0) {
 						recipeText.setText("Loading.\nPlease wait!");
@@ -621,9 +624,79 @@ public class gui extends JFrame implements DropTargetListener {
     private void noButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_noButtonActionPerformed
        // currentIndex++;
         //setImageActionPerformed(evt);
-    	System.out.println("No pressed!");
+    	currentIndex++;
+    	reClassify();
     }//GEN-LAST:event_noButtonActionPerformed
-
+    private void reClassify() {
+		yesButton.setEnabled(false);
+     noButton.setEnabled(false);
+	 Runnable webThread = new Runnable() {
+			public void run() {
+			    try{
+			    	if(isInternetReachable()) {
+			    		String searchTerm = "THISISANERROR";
+				    	/* KEYWORD DISPLAY */
+				    	if(!myList.isEmpty()) {
+				    		System.out.println("Current index: " + currentIndex);
+				    		for(int q = 0; q < myList.size();q++) {
+				    			System.out.println("Q List: " + q);
+				    		}
+				    		if(currentIndex < myList.size()) {
+				    			searchTerm = myList.get(currentIndex).getClassName().replaceAll(" ", "%20");
+				    			System.out.println("searchTerm is: " + searchTerm);
+				    		}
+				    	}
+				    	try {
+					    	HtmlUnitDriver driver;
+					    	driver = new HtmlUnitDriver();
+					    	System.out.println("Searchterm is: " + searchTerm);
+					    	if(searchTerm!="THISISANERROR"){
+					    		driver.get("http://www.bigoven.com/recipes/" + searchTerm + "/best");
+					    		driver.findElement(By.xpath("//div[2]/div/div/a/img")).click();
+					    		System.out.println("New place: "+ driver.getCurrentUrl());
+					    		String ingredients = driver.findElement(By.xpath("//div[@class='ingredients']")).getText();
+					    		String title = driver.findElement(By.xpath("//h1")).getText();
+					    		String directions = driver.findElement(By.xpath("//div[@class='recipe-instructions']")).getText();
+					    		String url_open = driver.getCurrentUrl();
+					    		driver.quit();
+		   
+					    		recipeText.setText(title + "\n-----------------------------\n" +ingredients +
+					    				"\nDirections" + "\n-----------------------------\n" + directions);
+					    	}else {
+					    		recipeText.setText("Sorry we were not able to find a recipe\nfor this image. Please try a new one.");	
+		                        yesButton.setEnabled(false);
+		                        noButton.setEnabled(false);
+					    	}
+				    	}catch(Exception e) {
+				    		Font old = recipeText.getFont();
+				    		//float size = font.getSize() + 5.0f;
+				    		//recipeText.setFont( font.deriveFont(size) );
+				    		if(currentIndex < myList.size()-1) {
+				    			currentIndex++;
+				    			run();
+				    		}else {
+ 	                        recipeText.setText("Sorry we were not able to find a recipe\nfor this image. Please try a new one.");	
+ 	                        yesButton.setEnabled(false);
+ 	                        noButton.setEnabled(false);
+				    		}
+				    	}
+						container.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+						yesButton.setEnabled(true);
+                     noButton.setEnabled(true);
+			    	}else {
+			    		container.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+			    		yesButton.setEnabled(true);
+                    noButton.setEnabled(true);
+			    	}
+					Thread.sleep(1000);
+			    }catch(Exception e){
+			    }   
+			}
+		};
+		Thread web = new Thread(webThread);
+		web.start();
+		wait(noButton);
+}
     /**
      * @param args the command line arguments
      */
