@@ -149,6 +149,10 @@ public class gui extends JFrame implements DropTargetListener {
         recipeText.setEditable(false);
         recipeText.setLineWrap(true);
         recipeText.setWrapStyleWord(true);
+        
+        this.setTitle("Recipe Finder");
+        recipeDialog.setTitle("Recipe Results");
+        
     }
     
     private void initDragDrop() {
